@@ -5,7 +5,7 @@ import { View, Text } from 'react-native'
 const HomeScreen = () => {
     return (
         <View>
-            <Text>Hello from the other side</Text>
+            <Text>logged in</Text>
         </View>
     )
 }
