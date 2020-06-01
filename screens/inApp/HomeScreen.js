@@ -1,21 +1,22 @@
 import React from "react";
-import { View, Text } from "react-native";
 
+import AccountScreen from "./AccountScreen";
+import SearchScreen from "./FeedScreen";
+import FeedScreen from "./FeedScreen";
+import WatchListScreen from "./WatchListScreen";
 
-
-
-import AccountScreen from './AccountScreen';
-import SearchScreen from './FeedScreen';
-import FeedScreen from './FeedScreen';
-import WatchListScreen from './WatchListScreen';
-
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+const Tab = createBottomTabNavigator();
 
 const HomeScreen = () => {
-    return (
-        <View>
-            <Text></Text>
-        </View>
-    )
-}
+  return (
+    <Tab.Navigator>
+      <Tab.Screen name="Account" component={AccountScreen} />
+      <Tab.Screen name="Search" component={SearchScreen} />
+      <Tab.Screen name="Feed" component={FeedScreen} />
+      <Tab.Screen name="WatchList" component={WatchListScreen} />
+    </Tab.Navigator>
+  );
+};
 
-export default HomeScreen
+export default HomeScreen;
