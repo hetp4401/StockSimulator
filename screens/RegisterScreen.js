@@ -17,15 +17,13 @@ const LoginScreen = (props) => {
   const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
 
-  const login = () => {
+  const signup = () => {
     auth()
-      .signInWithEmailAndPassword(email, password)
+      .createUserWithEmailAndPassword(email, password)
       .then((res) => {
-        setemail("");
-        setpassword("");
         props.navigation.navigate("Home", {});
       })
-      .catch((err) => Alert.alert("Invalid credentials"));
+      .catch((err) => Alert.alert(JSON.stringify(err)));
   };
 
   return (
@@ -38,7 +36,7 @@ const LoginScreen = (props) => {
         ></Image>
       </View>
       <View style={{ marginHorizontal: 32 }}>
-        <Text style={styles.header}>Login</Text>
+        <Text style={styles.header}>SignUp</Text>
         <TextInput
           style={styles.input}
           placeholder="email"
@@ -52,18 +50,11 @@ const LoginScreen = (props) => {
           value={password}
         ></TextInput>
         <View style={{ alignItems: "flex-end", marginTop: 64 }}>
-          <TouchableOpacity style={styles.screen} onPress={login}>
+          <TouchableOpacity style={styles.screen} onPress={signup}>
             <Ionicons name="md-arrow-round-forward" size={24} color="#FFF" />
           </TouchableOpacity>
         </View>
-        <View>
-          <TouchableOpacity style={styles.signup} onPress={() => props.navigation.navigate("Register", {})}>
-            <Text>SignUp</Text>
-          </TouchableOpacity>
-        </View>
       </View>
-
-
     </View>
   );
 };
