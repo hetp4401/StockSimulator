@@ -1,22 +1,28 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 
-import { createAppContainer } from "react-navigation";
-import { createStackNavigator } from "react-navigation-stack";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+const Stack = createStackNavigator();
 
 import LoginScreen from "./screens/LoginScreen";
-import HomeScreen from "./screens/HomeScreen";
+import HomeScreen from "./screens/inApp/HomeScreen";
 import RegisterScreen from "./screens/RegisterScreen";
 
-const AppNavigator = createStackNavigator(
-  {
-    Login: LoginScreen,
-    Register: RegisterScreen,
-    Home: HomeScreen,
-  },
-  {
-    headerMode: "none",
-  }
-);
+const App = () => {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Register" component={RegisterScreen} />
+        <Stack.Screen name="Home" component={HomeScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
 
-export default createAppContainer(AppNavigator);
+export default App;

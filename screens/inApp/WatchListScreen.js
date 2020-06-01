@@ -1,13 +1,12 @@
-
 import React from 'react'
 import { View, Text } from 'react-native'
 
-const HomeScreen = () => {
+const WatchListScreen = () => {
     return (
         <View>
-            <Text>logged in</Text>
+            <Text></Text>
         </View>
     )
 }
 
-export default HomeScreen
+export default WatchListScreen

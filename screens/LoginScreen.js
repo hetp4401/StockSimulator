@@ -14,6 +14,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { auth } from "../firebase";
 
 const LoginScreen = (props) => {
+  
   const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
 
@@ -57,13 +58,14 @@ const LoginScreen = (props) => {
           </TouchableOpacity>
         </View>
         <View>
-          <TouchableOpacity style={styles.signup} onPress={() => props.navigation.navigate("Register", {})}>
+          <TouchableOpacity
+            style={styles.signup}
+            onPress={() => props.navigation.navigate("Register", {})}
+          >
             <Text>SignUp</Text>
           </TouchableOpacity>
         </View>
       </View>
-
-
     </View>
   );
 };
@@ -110,7 +112,7 @@ const styles = StyleSheet.create({
   signup: {
     alignItems: "center",
     justifyContent: "center",
-  }
+  },
 });
 
 export default LoginScreen;
