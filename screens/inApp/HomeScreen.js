@@ -1,7 +1,7 @@
 import React from "react";
 
 import AccountScreen from "./AccountScreen";
-import SearchScreen from "./FeedScreen";
+import SearchScreen from "./SearchScreen";
 import FeedScreen from "./FeedScreen";
 import WatchListScreen from "./WatchListScreen";
 
