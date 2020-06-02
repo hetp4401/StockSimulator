@@ -10,7 +10,7 @@ import {
 
 import { av_key } from "../../config";
 
-const SearchScreen = () => {
+const SearchScreen = (props) => {
   const [stocks, setstocks] = useState([]);
   const [search, setsearch] = useState("");
 
@@ -25,10 +25,15 @@ const SearchScreen = () => {
           method: "GET",
         }
       )
-        .then((response) => response.json())
-        .then((responseJson) => {
-          const results = responseJson["bestMatches"];
-          const top = results.map((x) => x["1. symbol"] + " - " + x["2. name"]);
+        .then((res) => res.json())
+        .then((resJson) => {
+          const results = resJson["bestMatches"];
+          const top = results.map((x) => {
+            return {
+              ticker: x["1. symbol"],
+              name: x["2. name"],
+            };
+          });
           setstocks(top);
         })
         .catch((error) => {
@@ -59,6 +64,7 @@ const SearchScreen = () => {
           <Text
             style={{
               color: "red",
+              marginLeft: 20,
             }}
           >
             SEARCH
@@ -68,22 +74,24 @@ const SearchScreen = () => {
 
       <View>
         {stocks.map((x, i) => (
-          <Text key={i}>{x}</Text>
+          <TouchableOpacity
+            style={styles.list}
+            key={i}
+            onPress={() => props.navigation.navigate("stock", { x })}
+          >
+            <Text>{x.ticker + " - " + x.name}</Text>
+          </TouchableOpacity>
         ))}
       </View>
     </View>
   );
 };
+
 const styles = StyleSheet.create({
-  header: {
-    fontWeight: "800",
-    fontSize: 30,
-    fontStyle: "normal",
-    color: "#514e5a",
-    marginTop: 32,
-  },
   input: {
-    marginTop: 32,
+    marginTop: 52,
+    marginLeft: 20,
+    marginRight: 20,
     height: 50,
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: "#BAB7C3",
@@ -91,6 +99,10 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     color: "#514e5a",
     fontWeight: "600",
+  },
+  list: {
+    marginTop: 20,
+    marginLeft: 20,
   },
 });
 

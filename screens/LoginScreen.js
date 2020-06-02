@@ -24,7 +24,7 @@ const LoginScreen = (props) => {
       .then((res) => {
         setemail("");
         setpassword("");
-        props.navigation.navigate("Home", {});
+        props.navigation.navigate("inApp", {});
       })
       .catch((err) => Alert.alert("Invalid credentials"));
   };

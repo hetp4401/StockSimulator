@@ -21,7 +21,7 @@ const LoginScreen = (props) => {
     auth()
       .createUserWithEmailAndPassword(email, password)
       .then((res) => {
-        props.navigation.navigate("Home", {});
+        props.navigation.navigate("inApp", {});
       })
       .catch((err) => Alert.alert(JSON.stringify(err)));
   };
