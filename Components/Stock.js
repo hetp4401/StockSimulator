@@ -1,5 +1,12 @@
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from "react-native";
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Dimensions,
+  Alert,
+} from "react-native";
 
 import { av_key } from "../config";
 
@@ -9,6 +16,7 @@ const Stock = ({ route, navigation }) => {
   const { ticker, name } = route.params.x;
 
   const [response, setresponse] = useState("");
+  const [pricedata, setpricedata] = useState([0]);
 
   const get_intraday = (interval) => {
     fetch(
@@ -25,11 +33,22 @@ const Stock = ({ route, navigation }) => {
       .then((res) => res.json())
       .then((resJson) => {
         setresponse(JSON.stringify(resJson));
+        const raw_data = resJson["Time Series (" + interval + "min)"];
+        const processed_data = [];
+        for (const obj in raw_data) {
+          const price = raw_data[obj];
+          processed_data.push(parseFloat(price["1. open"]));
+        }
+        setpricedata(processed_data);
       })
       .catch((error) => {
         Alert.alert(error);
       });
   };
+
+  useEffect(() => {
+    get_intraday(5);
+  }, [])
 
   return (
     <View>
@@ -55,46 +74,35 @@ const Stock = ({ route, navigation }) => {
 
       <LineChart
         data={{
-          labels: ["January", "February", "March", "April", "May", "June"],
           datasets: [
             {
-              data: [
-                Math.random() * 100,
-                Math.random() * 100,
-                Math.random() * 100,
-                Math.random() * 100,
-                Math.random() * 100,
-                Math.random() * 100,
-              ],
+              data: pricedata,
             },
           ],
         }}
         width={Dimensions.get("window").width} // from react-native
-        height={220}
-        yAxisLabel="$"
-        yAxisSuffix="k"
-        yAxisInterval={1} // optional, defaults to 1
+        height={320}
         chartConfig={{
           backgroundColor: "#e26a00",
           backgroundGradientFromOpacity: "#fb8c00",
           backgroundGradientToOpacity: "#ffa726",
           decimalPlaces: 2, // optional, defaults to 2dp
-          color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+          color: (opacity = 1) => `rgba(31, 218, 255, ${opacity})`,
           labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
           style: {
-            borderRadius: 16,
+            borderRadius:0,
           },
           propsForDots: {
-            r: "6",
-            strokeWidth: "2",
-            stroke: "#ffa726",
+            r: "1",
+            strokeWidth: "1",
+            stroke: "#269dff",
           },
         }}
-        bezier
         style={{
           marginVertical: 8,
-          borderRadius: 16,
+          borderRadius: 5,
         }}
+        withInnerLines={false}
       />
     </View>
   );
