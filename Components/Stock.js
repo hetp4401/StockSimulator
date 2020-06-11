@@ -108,7 +108,7 @@ const Stock = ({ route, navigation }) => {
             },
           ],
         }}
-        width={Dimensions.get("window").width * 0.9} // from react-native
+        width={Dimensions.get("window").width * 0.95} // from react-native
         height={320}
         chartConfig={{
           backgroundGradientFrom: "#ebebeb",
