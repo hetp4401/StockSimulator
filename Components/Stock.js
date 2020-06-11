@@ -5,6 +5,9 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  Image,
+  ActivityIndicator,
+  Dimensions,
 } from "react-native";
 import { av_key } from "../config";
 import Chart from "./Chart";
@@ -23,6 +26,11 @@ const Stock = ({ route, navigation }) => {
   const [change, setchange] = useState("");
 
   const [links, setlinks] = useState([]);
+
+  const [loading, setloading] = useState(true);
+  const [loading2, setloading2] = useState(true);
+
+  const [selected, setselected] = useState(5);
 
   const get_intraday = (interval) => {
     fetch(
@@ -49,6 +57,7 @@ const Stock = ({ route, navigation }) => {
         }
         setprices(processed_data);
         setslables(label_data);
+        setloading(false);
       });
   };
 
@@ -89,6 +98,7 @@ const Stock = ({ route, navigation }) => {
           return { link: url, img: thumbnail, snippet: sample };
         });
         setlinks(urls);
+        setloading2(false);
       });
   };
 
@@ -98,25 +108,66 @@ const Stock = ({ route, navigation }) => {
     get_news();
   }, []);
 
-  return (
-    <ScrollView style={{ alignItems: "center" }}>
+  return loading ? (
+    <ActivityIndicator
+      size={100}
+      color="#0000ff"
+      style={{ marginTop: Dimensions.get("window").height * 0.5 }}
+    />
+  ) : (
+    <ScrollView>
       <View style={{ marginTop: 50 }}></View>
       <Text>{ticker + " - " + name}</Text>
       <View style={{ alignItems: "center", marginTop: 30 }}>
-        <TouchableOpacity onPress={() => get_intraday(1)}>
-          <Text>1min</Text>
+        <TouchableOpacity
+          onPress={() => {
+            setselected(1);
+            get_intraday(1);
+          }}
+        >
+          <Text style={selected == 1 ? { color: "red" } : { color: "black" }}>
+            1min
+          </Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => get_intraday(5)}>
-          <Text>5min</Text>
+        <TouchableOpacity
+          onPress={() => {
+            setselected(5);
+            get_intraday(5);
+          }}
+        >
+          <Text style={selected == 5 ? { color: "red" } : { color: "black" }}>
+            5min
+          </Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => get_intraday(15)}>
-          <Text>15min</Text>
+        <TouchableOpacity
+          onPress={() => {
+            setselected(15);
+            get_intraday(15);
+          }}
+        >
+          <Text style={selected == 15 ? { color: "red" } : { color: "black" }}>
+            15min
+          </Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => get_intraday(30)}>
-          <Text>30min</Text>
+        <TouchableOpacity
+          onPress={() => {
+            setselected(30);
+            get_intraday(30);
+          }}
+        >
+          <Text style={selected == 30 ? { color: "red" } : { color: "black" }}>
+            30min
+          </Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => get_intraday(60)}>
-          <Text>60min</Text>
+        <TouchableOpacity
+          onPress={() => {
+            setselected(60);
+            get_intraday(60);
+          }}
+        >
+          <Text style={selected == 60 ? { color: "red" } : { color: "black" }}>
+            60min
+          </Text>
         </TouchableOpacity>
       </View>
 
@@ -134,16 +185,35 @@ const Stock = ({ route, navigation }) => {
         </Text>
       </View>
 
+      <Text style={{ marginLeft: 20, marginTop: 30 }}>Latest News</Text>
+
       <View>
-        {links.map((x, i) => {
-          return (
-            <TouchableOpacity key={i} style={styles.card}>
-              <View>
-                <Text>{x.snippet}</Text>
-              </View>
-            </TouchableOpacity>
-          );
-        })}
+        {loading2 ? (
+          <ActivityIndicator
+            size="small"
+            color="#0000ff"
+            style={{ marginTop: 20 }}
+          />
+        ) : (
+          links.map((x, i) => {
+            return (
+              <TouchableOpacity key={i} style={styles.card}>
+                <Text style={{ marginLeft: 7, marginTop: 4 }}>{x.snippet}</Text>
+                <Image
+                  source={{
+                    uri: x.img,
+                  }}
+                  style={{
+                    height: 200,
+                    resizeMode: "stretch",
+                    margin: 5,
+                    borderRadius: 4,
+                  }}
+                />
+              </TouchableOpacity>
+            );
+          })
+        )}
       </View>
     </ScrollView>
   );
@@ -151,11 +221,11 @@ const Stock = ({ route, navigation }) => {
 
 const styles = StyleSheet.create({
   card: {
-    marginTop: 4,
-    marginLeft: 4,
-    marginRight: 4,
-    backgroundColor: "blue",
-    borderRadius: 30,
+    marginTop: 12,
+    marginLeft: 20,
+    marginRight: 20,
+    backgroundColor: "white",
+    borderRadius: 15,
   },
 });
 
