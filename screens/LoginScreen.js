@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -14,9 +14,16 @@ import { Ionicons } from "@expo/vector-icons";
 import { auth } from "../firebase";
 
 const LoginScreen = (props) => {
-  
   const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (auth().currentUser) {
+        props.navigation.navigate("inApp", {});
+      }
+    }, 1500);
+  }, []);
 
   const login = () => {
     auth()
