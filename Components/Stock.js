@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, Dimensions, Alert } from "react-native";
-
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+} from "react-native";
 import { av_key } from "../config";
-
-import { LineChart } from "react-native-chart-kit";
+import Chart from "./Chart";
 
 const Parser = require("fast-html-parser");
 
@@ -19,8 +23,6 @@ const Stock = ({ route, navigation }) => {
   const [change, setchange] = useState("");
 
   const [links, setlinks] = useState([]);
-
-  const [response, setresponse] = useState("trgrtg");
 
   const get_intraday = (interval) => {
     fetch(
@@ -77,8 +79,16 @@ const Stock = ({ route, navigation }) => {
         const arr = html.querySelectorAll(
           ".news-card.newsitem.cardcommon.b_cards2"
         );
-        const links = arr.map((x) => x.rawAttributes.url);
-        console.log(links);
+        const urls = arr.map((x) => {
+          const url = x.rawAttributes.url;
+          const imgobj = x.querySelector("img").rawAttributes;
+          const thumbnail =
+            "https://www.bing.com" +
+            ("data-src" in imgobj ? imgobj["data-src"] : imgobj.src);
+          const sample = x.querySelector(".snippet").rawAttributes.title;
+          return { link: url, img: thumbnail, snippet: sample };
+        });
+        setlinks(urls);
       });
   };
 
@@ -89,7 +99,7 @@ const Stock = ({ route, navigation }) => {
   }, []);
 
   return (
-    <View style={{ alignItems: "center" }}>
+    <ScrollView style={{ alignItems: "center" }}>
       <View style={{ marginTop: 50 }}></View>
       <Text>{ticker + " - " + name}</Text>
       <View style={{ alignItems: "center", marginTop: 30 }}>
@@ -110,46 +120,7 @@ const Stock = ({ route, navigation }) => {
         </TouchableOpacity>
       </View>
 
-      <LineChart
-        data={{
-          labels: slables,
-          datasets: [
-            {
-              data: prices,
-            },
-          ],
-        }}
-        width={Dimensions.get("window").width * 0.95} // from react-native
-        height={320}
-        chartConfig={{
-          backgroundGradientFrom: "#ebebeb",
-          backgroundGradientTo: "#ffffff",
-          fillShadowGradientOpacity: 0.1,
-          decimalPlaces: 2,
-          color: () => `rgba(5, 134, 255, ${100})`,
-          labelColor: () => `rgba(0, 0, 0, ${100})`,
-          style: {
-            borderRadius: 30,
-            paddingRight: 3,
-          },
-          propsForDots: {
-            r: "1",
-            strokeWidth: "0",
-            stroke: "#0586ff",
-            strokeOpacity: 1,
-          },
-          propsForLabels: {
-            fontFamily: "Verdana",
-            lengthAdjust: true,
-          },
-        }}
-        style={{
-          borderRadius: 13,
-          alignContent: "center",
-        }}
-        withInnerLines={false}
-        segments={5}
-      />
+      <Chart slables={slables} prices={prices}></Chart>
 
       <View style={{ alignItems: "center" }}>
         <Text>{"price - " + price}</Text>
@@ -163,9 +134,29 @@ const Stock = ({ route, navigation }) => {
         </Text>
       </View>
 
-      <Text>{response}</Text>
-    </View>
+      <View>
+        {links.map((x, i) => {
+          return (
+            <TouchableOpacity key={i} style={styles.card}>
+              <View>
+                <Text>{x.snippet}</Text>
+              </View>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+    </ScrollView>
   );
 };
+
+const styles = StyleSheet.create({
+  card: {
+    marginTop: 4,
+    marginLeft: 4,
+    marginRight: 4,
+    backgroundColor: "blue",
+    borderRadius: 30,
+  },
+});
 
 export default Stock;

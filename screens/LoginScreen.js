@@ -37,7 +37,7 @@ const LoginScreen = (props) => {
   };
 
   return (
-    <View style={styles.continaer}>
+    <View style={styles.container}>
       <View style={styles.circle} />
       <View style={{ marginTop: 150 }}>
         <Image
@@ -78,7 +78,7 @@ const LoginScreen = (props) => {
 };
 
 const styles = StyleSheet.create({
-  continaer: {
+  container: {
     flex: 1,
     backgroundColor: "#f4f5f7",
   },
