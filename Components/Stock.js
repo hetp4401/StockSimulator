@@ -3,7 +3,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  StyleSheet,
   Dimensions,
   Alert,
 } from "react-native";
@@ -116,8 +115,8 @@ const Stock = ({ route, navigation }) => {
           backgroundGradientTo: "#ffffff",
           fillShadowGradientOpacity: 0.1,
           decimalPlaces: 2,
-          color: () => `rgba(5, 134, 255, 90%)`,
-          labelColor: () => `rgba(0, 0, 0, 90%)`,
+          color: () => `rgba(5, 134, 255, ${100})`,
+          labelColor: () => `rgba(0, 0, 0, ${100})`,
           style: {
             borderRadius: 30,
             paddingRight: 3,
@@ -134,7 +133,6 @@ const Stock = ({ route, navigation }) => {
           },
         }}
         style={{
-          marginVertical: 8,
           borderRadius: 13,
           alignContent: "center",
         }}
@@ -143,8 +141,6 @@ const Stock = ({ route, navigation }) => {
       />
 
       <View style={{ alignItems: "center" }}>
-        <Text>{name}</Text>
-        <Text>{ticker}</Text>
         <Text>{"price - " + price}</Text>
         <Text>{"high - " + high}</Text>
         <Text>{"low - " + low}</Text>
