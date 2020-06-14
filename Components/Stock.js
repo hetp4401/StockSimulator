@@ -29,6 +29,7 @@ const Stock = ({ route, navigation }) => {
 
   const [loading, setloading] = useState(true);
   const [loading2, setloading2] = useState(true);
+  const [loading3, setloading3] = useState(true);
 
   const [selected, setselected] = useState(5);
 
@@ -77,6 +78,7 @@ const Stock = ({ route, navigation }) => {
         setlow(vals[3]);
         setvolume(vals[5]);
         setchange(vals[9]);
+        setloading2(false);
       });
   };
 
@@ -98,8 +100,13 @@ const Stock = ({ route, navigation }) => {
           return { link: url, img: thumbnail, snippet: sample };
         });
         setlinks(urls);
-        setloading2(false);
+        setloading3(false);
       });
+  };
+
+  const on_click = async (x) => {
+    setselected(x);
+    get_intraday(x);
   };
 
   useEffect(() => {
@@ -115,56 +122,31 @@ const Stock = ({ route, navigation }) => {
       style={{ marginTop: Dimensions.get("window").height * 0.5 }}
     />
   ) : (
-    <ScrollView>
+    <ScrollView pagingEnabled={false}>
       <View style={{ marginTop: 50 }}></View>
       <Text>{ticker + " - " + name}</Text>
       <View style={{ alignItems: "center", marginTop: 30 }}>
-        <TouchableOpacity
-          onPress={() => {
-            setselected(1);
-            get_intraday(1);
-          }}
-        >
+        <TouchableOpacity onPress={() => on_click(1)}>
           <Text style={selected == 1 ? { color: "red" } : { color: "black" }}>
             1min
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            setselected(5);
-            get_intraday(5);
-          }}
-        >
+        <TouchableOpacity onPress={() => on_click(5)}>
           <Text style={selected == 5 ? { color: "red" } : { color: "black" }}>
             5min
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            setselected(15);
-            get_intraday(15);
-          }}
-        >
+        <TouchableOpacity onPress={() => on_click(15)}>
           <Text style={selected == 15 ? { color: "red" } : { color: "black" }}>
             15min
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            setselected(30);
-            get_intraday(30);
-          }}
-        >
+        <TouchableOpacity onPress={() => on_click(30)}>
           <Text style={selected == 30 ? { color: "red" } : { color: "black" }}>
             30min
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            setselected(60);
-            get_intraday(60);
-          }}
-        >
+        <TouchableOpacity onPress={() => on_click(60)}>
           <Text style={selected == 60 ? { color: "red" } : { color: "black" }}>
             60min
           </Text>
@@ -173,22 +155,30 @@ const Stock = ({ route, navigation }) => {
 
       <Chart slables={slables} prices={prices}></Chart>
 
-      <View style={{ alignItems: "center" }}>
-        <Text>{"price - " + price}</Text>
-        <Text>{"high - " + high}</Text>
-        <Text>{"low - " + low}</Text>
-        <Text>{"volume - " + volume}</Text>
-        <Text
-          style={change.includes("-") ? { color: "red" } : { color: "green" }}
-        >
-          {change}
-        </Text>
-      </View>
+      {loading2 ? (
+        <ActivityIndicator
+          size="small"
+          color="#0000ff"
+          style={{ marginTop: 20 }}
+        />
+      ) : (
+        <View style={{ alignItems: "center" }}>
+          <Text>{"price - " + price}</Text>
+          <Text>{"high - " + high}</Text>
+          <Text>{"low - " + low}</Text>
+          <Text>{"volume - " + volume}</Text>
+          <Text
+            style={change.includes("-") ? { color: "red" } : { color: "green" }}
+          >
+            {change}
+          </Text>
+        </View>
+      )}
 
       <Text style={{ marginLeft: 20, marginTop: 30 }}>Latest News</Text>
 
       <View>
-        {loading2 ? (
+        {loading3 ? (
           <ActivityIndicator
             size="small"
             color="#0000ff"

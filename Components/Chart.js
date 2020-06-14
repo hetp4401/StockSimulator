@@ -27,10 +27,11 @@ export default Chart = ({ slables, prices }) => {
         style: {
           borderRadius: 30,
           paddingRight: 3,
+          overflow: "visible"
         },
         propsForDots: {
           r: "1",
-          strokeWidth: "1",
+          strokeWidth: "0",
           stroke: "#0586ff",
           strokeOpacity: 1,
         },
@@ -42,6 +43,7 @@ export default Chart = ({ slables, prices }) => {
       style={{
         borderRadius: 13,
         alignContent: "center",
+        overflow: "visible"
       }}
       withInnerLines={false}
       segments={5}
