@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect} from "react";
 import {
   View,
   Text,
@@ -8,9 +8,12 @@ import {
   Image,
   ActivityIndicator,
   Dimensions,
+  Linking,
+  Alert
 } from "react-native";
 import { av_key } from "../config";
 import Chart from "./Chart";
+import ArticleLink from "./ArticleLink";
 
 const Parser = require("fast-html-parser");
 
@@ -102,11 +105,23 @@ const Stock = ({ route, navigation }) => {
       });
   };
 
+  const open_url_browser = (url) =>{ 
+    useCallback(async () => {
+      const supported = await Linking.canOpenURL(url);
+      if (supported) {
+        await Linking.openURL(url);
+      } else {
+        Alert.alert(`Don't know how to open this URL: ${url}`);
+      }
+    }, [url]);
+  }
+
   useEffect(() => {
     get_intraday(5);
     get_quote();
     get_news();
   }, []);
+
 
   return loading ? (
     <ActivityIndicator
@@ -197,20 +212,7 @@ const Stock = ({ route, navigation }) => {
         ) : (
           links.map((x, i) => {
             return (
-              <TouchableOpacity key={i} style={styles.card}>
-                <Text style={{ marginLeft: 7, marginTop: 4 }}>{x.snippet}</Text>
-                <Image
-                  source={{
-                    uri: x.img,
-                  }}
-                  style={{
-                    height: 200,
-                    resizeMode: "stretch",
-                    margin: 5,
-                    borderRadius: 4,
-                  }}
-                />
-              </TouchableOpacity>
+              <ArticleLink x = {x} i = {i}/>
             );
           })
         )}
@@ -219,14 +221,6 @@ const Stock = ({ route, navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  card: {
-    marginTop: 12,
-    marginLeft: 20,
-    marginRight: 20,
-    backgroundColor: "white",
-    borderRadius: 15,
-  },
-});
+
 
 export default Stock;
