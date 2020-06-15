@@ -14,16 +14,11 @@ const Feed = ({ navigation }) => {
   const [gainers, setgainers] = useState([]);
   const [losers, setlosers] = useState([]);
   const [actives, setactives] = useState([]);
-  const mappings = {
-    "gainers ": setgainers,
-    "losers ": setlosers,
-    "most-active ": setactives,
-  };
 
-  const [current, setcurrent] = useState([]);
+  const [selected, setselected] = useState(1);
   const [links, setlinks] = useState([]);
 
-  const get_yahoo = (category) => {
+  const get_yahoo = (category, setter) => {
     fetch("https://finance.yahoo.com/" + category)
       .then((res) => res.text())
       .then((body) => {
@@ -53,15 +48,16 @@ const Feed = ({ navigation }) => {
             volume: v,
           });
 
-          const setter = mappings[category + " "];
-          setter(arr);
+          if (arr.length == 25) {
+            setter(arr);
+          }
         });
       });
   };
 
-  const get_gainers = () => get_yahoo("gainers");
-  const get_losers = () => get_yahoo("losers");
-  const get_most_actives = () => get_yahoo("most-active");
+  const get_gainers = () => get_yahoo("gainers", setgainers);
+  const get_losers = () => get_yahoo("losers", setlosers);
+  const get_most_actives = () => get_yahoo("most-active", setactives);
 
   const get_news = (query) => {
     fetch("https://www.bing.com/news/search?q=" + query)
@@ -85,24 +81,49 @@ const Feed = ({ navigation }) => {
   };
 
   useEffect(() => {
+    setInterval(() => {
+      get_gainers();
+      get_losers();
+      get_most_actives();
+    }, 7000);
     get_gainers();
     get_losers();
     get_most_actives();
     get_news("finance");
-    setTimeout(() => setcurrent(actives), 3000);
   }, []);
 
   return (
     <ScrollView>
       <View style={{ flexDirection: "row", justifyContent: "center" }}>
-        <TouchableOpacity onPress={() => setcurrent(gainers)}>
-          <Text style={{ margin: 10 }}>Gainers</Text>
+        <TouchableOpacity onPress={() => setselected(0)}>
+          <Text
+            style={{
+              ...{ margin: 10 },
+              ...(selected == 0 ? { color: "orange" } : { color: "black" }),
+            }}
+          >
+            Gainers
+          </Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => setcurrent(actives)}>
-          <Text style={{ margin: 10 }}>Most-Active</Text>
+        <TouchableOpacity onPress={() => setselected(1)}>
+          <Text
+            style={{
+              ...{ margin: 10 },
+              ...(selected == 1 ? { color: "orange" } : { color: "black" }),
+            }}
+          >
+            Most-Active
+          </Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => setcurrent(losers)}>
-          <Text style={{ margin: 10 }}>Losers</Text>
+        <TouchableOpacity onPress={() => setselected(2)}>
+          <Text
+            style={{
+              ...{ margin: 10 },
+              ...(selected == 2 ? { color: "orange" } : { color: "black" }),
+            }}
+          >
+            Losers
+          </Text>
         </TouchableOpacity>
       </View>
 
@@ -115,46 +136,48 @@ const Feed = ({ navigation }) => {
         </Text>
       </View>
 
-      {current.map((x, i) => (
-        <TouchableOpacity
-          key={i}
-          onPress={() => navigation.navigate("stock", { x })}
-          style={styles.stock}
-        >
-          <Text style={{ width: "30%", marginLeft: 20, color: "#474747" }}>
-            {x.ticker}
-          </Text>
-          <Text
-            style={{
-              width: "23%",
-              textAlign: "right",
-              color: "#474747",
-            }}
+      {(selected == 1 ? actives : selected == 2 ? losers : gainers).map(
+        (x, i) => (
+          <TouchableOpacity
+            key={i}
+            onPress={() => navigation.navigate("stock", { x })}
+            style={styles.stock}
           >
-            {x.price}
-          </Text>
-          <Text
-            style={{
-              ...{ width: "23%", textAlign: "right", color: "#474747" },
-              ...(x.pchange.includes("+")
-                ? { color: "green" }
-                : { color: "red" }),
-            }}
-          >
-            {x.pchange}
-          </Text>
-          <Text
-            style={{
-              width: "23%",
-              textAlign: "right",
-              marginRight: 20,
-              color: "#474747",
-            }}
-          >
-            {x.volume}
-          </Text>
-        </TouchableOpacity>
-      ))}
+            <Text style={{ width: "30%", marginLeft: 20, color: "#474747" }}>
+              {x.ticker}
+            </Text>
+            <Text
+              style={{
+                width: "23%",
+                textAlign: "right",
+                color: "#474747",
+              }}
+            >
+              {x.price}
+            </Text>
+            <Text
+              style={{
+                ...{ width: "23%", textAlign: "right", color: "#474747" },
+                ...(x.pchange.includes("+")
+                  ? { color: "green" }
+                  : { color: "red" }),
+              }}
+            >
+              {x.pchange}
+            </Text>
+            <Text
+              style={{
+                width: "23%",
+                textAlign: "right",
+                marginRight: 20,
+                color: "#474747",
+              }}
+            >
+              {x.volume}
+            </Text>
+          </TouchableOpacity>
+        )
+      )}
 
       <Text style={{ marginLeft: 20, marginTop: 30 }}>Latest News</Text>
 
