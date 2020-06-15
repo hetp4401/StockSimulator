@@ -1,109 +1,22 @@
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  Alert,
-  TouchableOpacity,
-} from "react-native";
+import React from "react";
 
-import { av_key } from "../../config";
+import Search from "../../Components/Search";
+import Stock from "../../Components/Stock";
 
-const SearchScreen = (props) => {
-  const [stocks, setstocks] = useState([]);
-  const [search, setsearch] = useState("");
+import { createStackNavigator } from "@react-navigation/stack";
+const searchStack = createStackNavigator();
 
-  const topResults = () => {
-    if (search.length > 0) {
-      fetch(
-        "https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=" +
-          search +
-          "&apikey=" +
-          av_key,
-        {
-          method: "GET",
-        }
-      )
-        .then((res) => res.json())
-        .then((resJson) => {
-          const results = resJson["bestMatches"];
-          const top = results.map((x) => {
-            return {
-              ticker: x["1. symbol"],
-              name: x["2. name"],
-            };
-          });
-          setstocks(top);
-        })
-        .catch((error) => {
-          Alert.alert(error);
-        });
-    } else {
-      setsearch("");
-    }
-  };
-
+const SearchScreen = () => {
   return (
-    <View>
-      <TextInput
-        style={styles.input}
-        placeholder="search stock"
-        onChangeText={(text) => setsearch(text)}
-        value={search}
-      ></TextInput>
-      <View>
-        <TouchableOpacity
-          onPress={topResults}
-          style={{
-            marginTop: 30,
-            justifyContent: "center",
-            alignContent: "center",
-          }}
-        >
-          <Text
-            style={{
-              color: "red",
-              marginLeft: 20,
-            }}
-          >
-            SEARCH
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      <View>
-        {stocks.map((x, i) => (
-          <TouchableOpacity
-            style={styles.list}
-            key={i}
-            onPress={() => props.navigation.navigate("stock", { x })}
-          >
-            <Text>{x.ticker + " - " + x.name}</Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-    </View>
+    <searchStack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <searchStack.Screen name="search" component={Search} />
+      <searchStack.Screen name="stock" component={Stock} />
+    </searchStack.Navigator>
   );
 };
-
-const styles = StyleSheet.create({
-  input: {
-    marginTop: 52,
-    marginLeft: 20,
-    marginRight: 20,
-    height: 50,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: "#BAB7C3",
-    paddingHorizontal: 16,
-    borderRadius: 30,
-    color: "#514e5a",
-    fontWeight: "600",
-  },
-  list: {
-    marginTop: 20,
-    marginLeft: 20,
-  },
-});
 
 export default SearchScreen;

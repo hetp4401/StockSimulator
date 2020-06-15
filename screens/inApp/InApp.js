@@ -1,7 +1,7 @@
 import React from "react";
 
 import AccountScreen from "./AccountScreen";
-import SearchStack from "./SearchStack";
+import SearchScreen from "./SearchScreen";
 import FeedScreen from "./FeedScreen";
 import WatchListScreen from "./WatchListScreen";
 
@@ -12,7 +12,7 @@ const InApp = () => {
   return (
     <Tab.Navigator>
       <Tab.Screen name="Account" component={AccountScreen} />
-      <Tab.Screen name="Search" component={SearchStack} />
+      <Tab.Screen name="Search" component={SearchScreen} />
       <Tab.Screen name="Feed" component={FeedScreen} />
       <Tab.Screen name="WatchList" component={WatchListScreen} />
     </Tab.Navigator>

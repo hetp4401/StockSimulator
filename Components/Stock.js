@@ -1,15 +1,12 @@
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
   TouchableOpacity,
   StyleSheet,
   ScrollView,
-  Image,
   ActivityIndicator,
   Dimensions,
-  Linking,
-  Alert
 } from "react-native";
 import { av_key } from "../config";
 import Chart from "./Chart";
@@ -105,23 +102,16 @@ const Stock = ({ route, navigation }) => {
       });
   };
 
-  const open_url_browser = (url) =>{ 
-    useCallback(async () => {
-      const supported = await Linking.canOpenURL(url);
-      if (supported) {
-        await Linking.openURL(url);
-      } else {
-        Alert.alert(`Don't know how to open this URL: ${url}`);
-      }
-    }, [url]);
-  }
+  const change_select = (x) => {
+    setselected(x);
+    get_intraday(x);
+  };
 
   useEffect(() => {
     get_intraday(5);
     get_quote();
     get_news();
   }, []);
-
 
   return loading ? (
     <ActivityIndicator
@@ -134,52 +124,27 @@ const Stock = ({ route, navigation }) => {
       <View style={{ marginTop: 50 }}></View>
       <Text>{ticker + " - " + name}</Text>
       <View style={{ alignItems: "center", marginTop: 30 }}>
-        <TouchableOpacity
-          onPress={() => {
-            setselected(1);
-            get_intraday(1);
-          }}
-        >
+        <TouchableOpacity onPress={() => change_select(1)}>
           <Text style={selected == 1 ? { color: "red" } : { color: "black" }}>
             1min
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            setselected(5);
-            get_intraday(5);
-          }}
-        >
+        <TouchableOpacity onPress={() => change_select(5)}>
           <Text style={selected == 5 ? { color: "red" } : { color: "black" }}>
             5min
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            setselected(15);
-            get_intraday(15);
-          }}
-        >
+        <TouchableOpacity onPress={() => change_select(15)}>
           <Text style={selected == 15 ? { color: "red" } : { color: "black" }}>
             15min
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            setselected(30);
-            get_intraday(30);
-          }}
-        >
+        <TouchableOpacity onPress={() => change_select(30)}>
           <Text style={selected == 30 ? { color: "red" } : { color: "black" }}>
             30min
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            setselected(60);
-            get_intraday(60);
-          }}
-        >
+        <TouchableOpacity onPress={() => change_select(60)}>
           <Text style={selected == 60 ? { color: "red" } : { color: "black" }}>
             60min
           </Text>
@@ -211,16 +176,12 @@ const Stock = ({ route, navigation }) => {
           />
         ) : (
           links.map((x, i) => {
-            return (
-              <ArticleLink x = {x} i = {i}/>
-            );
+            return <ArticleLink x={x} key={i} />;
           })
         )}
       </View>
     </ScrollView>
   );
 };
-
-
 
 export default Stock;

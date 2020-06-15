@@ -1,14 +1,22 @@
+import React from "react";
+import Feed from "../../Components/Feed";
+import Stock from "../../Components/Stock";
 
+import { createStackNavigator } from "@react-navigation/stack";
 
-import React from 'react'
-import { View, Text } from 'react-native'
+const feedStack = createStackNavigator();
 
 const FeedScreen = () => {
-    return (
-        <View>
-            <Text></Text>
-        </View>
-    )
-}
+  return (
+    <feedStack.Navigator
+      screenOptions={{
+        headerShown: true,
+      }}
+    >
+      <feedStack.Screen name="feed" component={Feed} />
+      <feedStack.Screen name="stock" component={Stock} />
+    </feedStack.Navigator>
+  );
+};
 
-export default FeedScreen
+export default FeedScreen;
