@@ -1,11 +1,19 @@
 import React from 'react'
 import { View, Text } from 'react-native'
+import WatchList from "../../Components/WatchList"
+
+import { createStackNavigator } from "@react-navigation/stack";
+const watchListStack = createStackNavigator();
 
 const WatchListScreen = () => {
     return (
-        <View>
-            <Text></Text>
-        </View>
+        <watchListStack.Navigator
+            screenOptions={{
+                headerShown: true,
+            }}
+        >
+            <watchListStack.Screen name="watchlist" component={WatchList} />
+        </watchListStack.Navigator>
     )
 }
 
