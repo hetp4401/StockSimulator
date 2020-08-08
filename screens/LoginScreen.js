@@ -11,7 +11,7 @@ import {
 
 import { Ionicons } from "@expo/vector-icons";
 
-import { auth } from "../firebase";
+import { auth, db } from "../firebase";
 
 const LoginScreen = (props) => {
   const [email, setemail] = useState("");
@@ -32,8 +32,24 @@ const LoginScreen = (props) => {
         setemail("");
         setpassword("");
         props.navigation.navigate("inApp", {});
+
+        db.collection("users")
+          .doc(auth().currentUser.uid)
+          .set({
+            balance: 10000,
+            watchlist: [],
+            portfolio: [],
+            history: [],
+          })
+          .then(() => {})
+          .catch(function (error) {
+            console.error(error);
+          });
       })
-      .catch((err) => Alert.alert("Invalid credentials"));
+      .catch((err) => {
+        console.log(err);
+        Alert.alert("Invalid credentials");
+      });
   };
 
   return (

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Slid } from "react";
 import {
   View,
   Text,
@@ -7,10 +7,12 @@ import {
   ScrollView,
   ActivityIndicator,
   Dimensions,
+  Slider,
 } from "react-native";
 import { av_key } from "../config";
 import Chart from "./Chart";
 import ArticleLink from "./ArticleLink";
+import { getBalance } from "../firebase";
 
 const Parser = require("fast-html-parser");
 
@@ -164,6 +166,14 @@ const Stock = ({ route, navigation }) => {
           {change}
         </Text>
       </View>
+
+      <Slider
+        style={{ width: 200, height: 40 }}
+        minimumValue={0}
+        maximumValue={1}
+        minimumTrackTintColor="#FFFFFF"
+        maximumTrackTintColor="#000000"
+      />
 
       <Text style={{ marginLeft: 20, marginTop: 30 }}>Latest News</Text>
 

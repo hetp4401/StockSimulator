@@ -22,6 +22,7 @@ const LoginScreen = (props) => {
       .createUserWithEmailAndPassword(email, password)
       .then((res) => {
         props.navigation.navigate("inApp", {});
+        console.log(res);
       })
       .catch((err) => Alert.alert(JSON.stringify(err)));
   };
@@ -101,7 +102,7 @@ const styles = StyleSheet.create({
   signup: {
     alignItems: "center",
     justifyContent: "center",
-  }
+  },
 });
 
 export default LoginScreen;
