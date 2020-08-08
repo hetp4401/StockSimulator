@@ -12,16 +12,24 @@ import {
 import { av_key } from "../config";
 import Chart from "./Chart";
 import ArticleLink from "./ArticleLink";
-import { getBalance } from "../firebase";
+import { db, auth } from "../firebase";
 
 const Parser = require("fast-html-parser");
 
 const Stock = ({ route, navigation }) => {
+  const [account, setaccount] = useState({});
+  const [balance, setbalance] = useState(0);
+  const [owned, setowned] = useState(0);
+  const [sliderb, setsliderb] = useState(0);
+  const [sliders, setsliders] = useState(0);
+
+  const [buy, setbuy] = useState(true);
+
   const { ticker, name } = route.params.x;
 
   const [slables, setslables] = useState([""]);
   const [prices, setprices] = useState([0]);
-  const [price, setprice] = useState("");
+  const [price, setprice] = useState(1);
   const [high, sethigh] = useState("");
   const [low, setlow] = useState("");
   const [volume, setvolume] = useState("");
@@ -109,10 +117,66 @@ const Stock = ({ route, navigation }) => {
     get_intraday(x);
   };
 
+  const buystock = () => {
+    const target = {};
+    target["portfolio." + ticker] = sliderb;
+    target["balance"] = balance - sliderb * price;
+    account["history"].push({
+      action: "buy",
+      ticker: ticker,
+      amount: sliderb,
+      price: price,
+      cost: "-" + sliderb * price,
+    });
+    target["history"] = account["history"];
+
+    db.collection("users")
+      .doc(auth().currentUser.uid)
+      .update(target)
+      .then(() => {
+        console.log("updated");
+        update_data();
+      });
+  };
+
+  const sellstock = () => {
+    const target = {};
+    target["portfolio." + ticker] = owned - sliders;
+    target["balance"] = balance + sliders * price;
+    account["history"].push({
+      action: "sell",
+      ticker: ticker,
+      amount: sliders,
+      price: price,
+      cost: "+" + sliderb * price,
+    });
+    target["history"] = account["history"];
+    db.collection("users")
+      .doc(auth().currentUser.uid)
+      .update(target)
+      .then(() => {
+        console.log("updated");
+        update_data();
+      });
+  };
+
+  const update_data = () => {
+    db.collection("users")
+      .doc(auth().currentUser.uid)
+      .get()
+      .then((doc) => {
+        const data = doc.data();
+        setaccount(data);
+        setbalance(data["balance"]);
+        setowned(ticker in data["portfolio"] ? data["portfolio"][ticker] : 0);
+      });
+  };
+
   useEffect(() => {
     get_intraday(5);
     get_quote();
-    get_news();
+    //get_news();
+    update_data();
   }, []);
 
   return loading ? (
@@ -165,19 +229,97 @@ const Stock = ({ route, navigation }) => {
         >
           {change}
         </Text>
-      </View>
+        <View>
+          <View style={{ flexDirection: "row", justifyContent: "center" }}>
+            <TouchableOpacity>
+              <Text
+                style={buy ? { color: "green", margin: 20 } : { margin: 20 }}
+                onPress={() => {
+                  setbuy(true);
+                }}
+              >
+                Buy
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <Text
+                style={buy ? { margin: 20 } : { margin: 20, color: "red" }}
+                onPress={() => {
+                  setbuy(false);
+                }}
+              >
+                Sell
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
 
-      <Slider
-        style={{ width: 200, height: 40 }}
-        minimumValue={0}
-        maximumValue={1}
-        minimumTrackTintColor="#FFFFFF"
-        maximumTrackTintColor="#000000"
-      />
+        <View>
+          {buy ? (
+            <View>
+              <Text>Balance: ${balance}</Text>
+              <Slider
+                style={{ width: 200, height: 40 }}
+                minimumValue={0}
+                maximumValue={balance / price}
+                onValueChange={(val) => {
+                  setsliderb(val);
+                }}
+                value={sliderb}
+              />
+              <Text>
+                Shares: {sliderb} Amount: ${sliderb * price}
+              </Text>
+              <TouchableOpacity
+                onPress={() => {
+                  buystock();
+                }}
+              >
+                <Text
+                  style={{
+                    color: "white",
+                    backgroundColor: "green",
+                    width: 30,
+                  }}
+                >
+                  BUY
+                </Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <View>
+              <Text>Amount: {owned}</Text>
+              <Slider
+                style={{ width: 200, height: 40 }}
+                minimumValue={0}
+                maximumValue={owned}
+                onValueChange={(val) => {
+                  setsliders(val);
+                }}
+                value={sliders}
+              />
+              <Text>
+                Shares: {sliders} Amount: ${sliders * price}
+              </Text>
+              <TouchableOpacity
+                onPress={() => {
+                  sellstock();
+                }}
+              >
+                <Text
+                  style={{ color: "white", backgroundColor: "red", width: 40 }}
+                >
+                  SELL
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
+      </View>
 
       <Text style={{ marginLeft: 20, marginTop: 30 }}>Latest News</Text>
 
-      <View>
+      {/* <View>
         {loading2 ? (
           <ActivityIndicator
             size="small"
@@ -189,7 +331,7 @@ const Stock = ({ route, navigation }) => {
             return <ArticleLink x={x} key={i} />;
           })
         )}
-      </View>
+      </View> */}
     </ScrollView>
   );
 };

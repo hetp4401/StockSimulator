@@ -1,6 +1,7 @@
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
+import { set } from "react-native-reanimated";
 
 const config = {
   apiKey: "AIzaSyAIbJZWbezVX40mqN3ikCRvb5b4s4ZAgQc",
@@ -18,6 +19,3 @@ firebase.initializeApp(config);
 export const auth = firebase.auth;
 export const db = firebase.firestore();
 
-export const getBalance = () => {
-  console.log(db.collection("users").doc(auth().currentUser.uid));
-};
