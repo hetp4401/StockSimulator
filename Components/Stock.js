@@ -7,10 +7,14 @@ import {
   ScrollView,
   ActivityIndicator,
   Dimensions,
+  Button,
+  Alert
 } from "react-native";
 import { av_key } from "../config";
+import {db,auth} from "../firebase"
 import Chart from "./Chart";
 import ArticleLink from "./ArticleLink";
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const Parser = require("fast-html-parser");
 
@@ -24,6 +28,7 @@ const Stock = ({ route, navigation }) => {
   const [low, setlow] = useState("");
   const [volume, setvolume] = useState("");
   const [change, setchange] = useState("");
+  const [favourite, setfavourite] = useState(false);
 
   const [links, setlinks] = useState([]);
 
@@ -107,6 +112,17 @@ const Stock = ({ route, navigation }) => {
     get_intraday(x);
   };
 
+  const handleChange =() =>{
+    setfavourite(prevState => !prevState);
+    Alert.alert(
+      `${ticker} ${!favourite ? 'added to' : 'removed from'} Watchlist`
+    )
+    
+    db.ref("users/" + auth().currentUser.uid + "/watchlist").set({
+      watchlist : ""
+    });
+  };
+
   useEffect(() => {
     get_intraday(5);
     get_quote();
@@ -164,6 +180,21 @@ const Stock = ({ route, navigation }) => {
           {change}
         </Text>
       </View>
+
+      <View style = {{alignItems: "center", display: "flex", flexDirection: "row" ,alignContent:"center", justifyContent:"center" }}>
+        <Ionicons 
+          name={favourite ? "ios-star" : "ios-star-outline"}
+          size ={30} 
+          color={'blue'} 
+          onPress = {handleChange}
+        />
+
+        <Button
+          title= 'Add to watchlist'
+          onPress = {handleChange} 
+        />
+      </View> 
+
 
       <Text style={{ marginLeft: 20, marginTop: 30 }}>Latest News</Text>
 

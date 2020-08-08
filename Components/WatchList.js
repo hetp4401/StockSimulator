@@ -9,27 +9,44 @@ import {
 } from "react-native";
 
 
+
 const WatchList = () => {
-    
 
     return (
         <SafeAreaView>
             <ScrollView>
-                <View style = {{flexDirection: "row", justifyContent: "center"}}>
+                <TouchableOpacity style = {styles.favouritesCard}>
                     <Text>
-                        Watchlist
+                        Testing
                     </Text>
+                </TouchableOpacity>
+                <TouchableOpacity style = {styles.favouritesCard}>
                     <Text>
-                        need to add: 
-                            favourites section, 
-                            
+                        Testing
                     </Text>
-                </View>
+                </TouchableOpacity>
+                <TouchableOpacity style = {styles.favouritesCard}>
+                    <Text>
+                        Testing
+                    </Text>
+                </TouchableOpacity>
             </ScrollView>
         </SafeAreaView>
         
     )
 }
+
+const styles = StyleSheet.create({
+    favouritesCard: {
+        marginTop: 15,
+        marginLeft: 20,
+        marginRight: 20,
+        paddingHorizontal: 20,
+        paddingVertical: 40,
+        backgroundColor: "white",
+        borderRadius: 30,
+    },
+  });
 
 
 
