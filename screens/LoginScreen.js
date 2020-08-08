@@ -32,19 +32,6 @@ const LoginScreen = (props) => {
         setemail("");
         setpassword("");
         props.navigation.navigate("inApp", {});
-
-        db.collection("users")
-          .doc(auth().currentUser.uid)
-          .set({
-            balance: 10000,
-            watchlist: [],
-            portfolio: [],
-            history: [],
-          })
-          .then(() => {})
-          .catch(function (error) {
-            console.error(error);
-          });
       })
       .catch((err) => {
         console.log(err);

@@ -18,4 +18,6 @@ firebase.initializeApp(config);
 export const auth = firebase.auth;
 export const db = firebase.firestore();
 
-export const getBalance = () => {};
+export const getBalance = () => {
+  console.log(db.collection("users").doc(auth().currentUser.uid));
+};
