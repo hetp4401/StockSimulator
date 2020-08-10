@@ -7,7 +7,6 @@ export default Chart = ({ slables, prices }) => {
   return (
     <LineChart
       data={{
-        labels: slables,
         datasets: [
           {
             data: prices,
@@ -28,12 +27,6 @@ export default Chart = ({ slables, prices }) => {
           borderRadius: 30,
           paddingRight: 3,
         },
-        propsForDots: {
-          r: "1",
-          strokeWidth: "1",
-          stroke: "#0586ff",
-          strokeOpacity: 1,
-        },
         propsForLabels: {
           fontFamily: "Verdana",
           lengthAdjust: true,
@@ -45,6 +38,8 @@ export default Chart = ({ slables, prices }) => {
       }}
       withInnerLines={false}
       segments={5}
+      withDots={false}
+      axis
     />
   );
 };

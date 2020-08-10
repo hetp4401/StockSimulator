@@ -8,11 +8,20 @@ import {
   ActivityIndicator,
   Dimensions,
   Slider,
+  Alert,
+  Button,
 } from "react-native";
 import { av_key } from "../config";
 import Chart from "./Chart";
 import ArticleLink from "./ArticleLink";
 import { db, auth } from "../firebase";
+import {
+  LineChart,
+  StackedAreaChart,
+  AreaChart,
+  Grid,
+} from "react-native-svg-charts";
+import { ClipPath, Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 
 const Parser = require("fast-html-parser");
 
@@ -22,6 +31,7 @@ const Stock = ({ route, navigation }) => {
   const [owned, setowned] = useState(0);
   const [sliderb, setsliderb] = useState(0);
   const [sliders, setsliders] = useState(0);
+  const [slidetest, setslidetest] = useState(0);
 
   const [buy, setbuy] = useState(true);
 
@@ -136,6 +146,14 @@ const Stock = ({ route, navigation }) => {
       .then(() => {
         console.log("updated");
         update_data();
+        Alert.alert(
+          "Bought " +
+            sliderb.toFixed(2) +
+            " shares of " +
+            ticker +
+            " at $" +
+            price
+        );
       });
   };
 
@@ -157,6 +175,14 @@ const Stock = ({ route, navigation }) => {
       .then(() => {
         console.log("updated");
         update_data();
+        Alert.alert(
+          "Sold " +
+            sliders.toFixed(2) +
+            " shares of " +
+            ticker +
+            " at $" +
+            price
+        );
       });
   };
 
@@ -179,6 +205,18 @@ const Stock = ({ route, navigation }) => {
     update_data();
   }, []);
 
+  const Gradient = () => (
+    <Defs key={"gradient"}>
+      <LinearGradient id={"gradient"} x1={"0%"} y1={"0%"} x2={"0%"} y2={"100%"}>
+        <Stop offset={"0%"} stopColor={"rgb(134, 65, 244)"} stopOpacity={0.6} />
+        <Stop
+          offset={"2%"}
+          stopColor={"rgb(241, 241, 241)"}
+          stopOpacity={1}
+        />
+      </LinearGradient>
+    </Defs>
+  );
   return loading ? (
     <ActivityIndicator
       size={100}
@@ -216,8 +254,21 @@ const Stock = ({ route, navigation }) => {
           </Text>
         </TouchableOpacity>
       </View>
-
       <Chart slables={slables} prices={prices}></Chart>
+
+      <AreaChart
+        style={{ height: 300 }}
+        data={prices}
+        contentInset={{ top: 30, bottom: 30 }}
+        svg={{
+          fill: "url(#gradient)",
+          stroke: "rgb(117, 31, 255)",
+          strokeWidth: 3,
+        }}
+        showGrid={false}
+      >
+        <Gradient />
+      </AreaChart>
 
       <View style={{ alignItems: "center" }}>
         <Text>{"price - " + price}</Text>
@@ -254,7 +305,7 @@ const Stock = ({ route, navigation }) => {
           </View>
         </View>
 
-        <View>
+        <View style={{ margin: 20 }}>
           {buy ? (
             <View>
               <Text>Balance: ${balance}</Text>
@@ -265,11 +316,9 @@ const Stock = ({ route, navigation }) => {
                 onValueChange={(val) => {
                   setsliderb(val);
                 }}
-                value={sliderb}
               />
-              <Text>
-                Shares: {sliderb} Amount: ${sliderb * price}
-              </Text>
+              <Text>Shares: {sliderb.toFixed(2)}</Text>
+              <Text>Amount: ${(sliderb * price).toFixed(2)}</Text>
               <TouchableOpacity
                 onPress={() => {
                   buystock();
@@ -296,11 +345,9 @@ const Stock = ({ route, navigation }) => {
                 onValueChange={(val) => {
                   setsliders(val);
                 }}
-                value={sliders}
               />
-              <Text>
-                Shares: {sliders} Amount: ${sliders * price}
-              </Text>
+              <Text>Shares: {sliders.toFixed(2)}</Text>
+              <Text>Amount: ${(sliders * price).toFixed(2)}</Text>
               <TouchableOpacity
                 onPress={() => {
                   sellstock();
