@@ -196,6 +196,7 @@ const Stock = ({ route, navigation }) => {
         setbalance(data["balance"]);
         setowned(ticker in data["portfolio"] ? data["portfolio"][ticker] : 0);
       });
+      
   };
 
   useEffect(() => {
