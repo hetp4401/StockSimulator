@@ -1,18 +1,23 @@
 import firebase from "firebase/app";
 import "firebase/auth";
-import "firebase/database";
-
-import { api_params } from "./config";
-
-const { key, domian, url } = api_params;
+import "firebase/firestore";
 
 const config = {
-  apiKey: key,
-  authDomain: domian,
-  databaseURL: url,
+  apiKey: "AIzaSyAIbJZWbezVX40mqN3ikCRvb5b4s4ZAgQc",
+  authDomain: "stocks-1b665.firebaseapp.com",
+  databaseURL: "https://stocks-1b665.firebaseio.com",
+  projectId: "stocks-1b665",
+  storageBucket: "stocks-1b665.appspot.com",
+  messagingSenderId: "591063709398",
+  appId: "1:591063709398:web:cefa80b343f90837e97b77",
+  measurementId: "G-1LDZ93L33S",
 };
 
 firebase.initializeApp(config);
 
 export const auth = firebase.auth;
-export const db = firebase.database();
+export const db = firebase.firestore();
+
+export const getBalance = () => {
+  console.log(db.collection("users").doc(auth().currentUser.uid));
+};

@@ -8,28 +8,50 @@ import {
   SafeAreaView
 } from "react-native";
 
+import {auth, db} from "../firebase";
+import { set } from "react-native-reanimated";
 
 
-const WatchList = () => {
+const WatchList = ({navigation}) => {
+    const [favourites,setFavourites] = useState([]);
+    
+
+    const getUserFavourites = ()=>{
+
+       db.collection("users").doc(auth().currentUser.uid).get()
+       .then(doc =>{
+           setFavourites(doc.data().watchlist);
+       })
+
+    }
+
+    useEffect(()=>{
+        setTimeout(() => {
+            getUserFavourites();
+        },1000);
+    
+    });
 
     return (
         <SafeAreaView>
             <ScrollView>
-                <TouchableOpacity style = {styles.favouritesCard}>
-                    <Text>
-                        Testing
-                    </Text>
-                </TouchableOpacity>
-                <TouchableOpacity style = {styles.favouritesCard}>
-                    <Text>
-                        Testing
-                    </Text>
-                </TouchableOpacity>
-                <TouchableOpacity style = {styles.favouritesCard}>
-                    <Text>
-                        Testing
-                    </Text>
-                </TouchableOpacity>
+                {favourites.map((x, i) => ( 
+                   <TouchableOpacity 
+                    style = {styles.favouritesCard}
+                    key = {i}
+                    onPress={() => navigation.navigate("stock", { x })}
+                    >
+                        <Text>
+                            {x.ticker}
+                        </Text>
+                        <Text>
+                            {x.name}
+                        </Text>
+                        <Text>
+                            {x.volume}
+                        </Text>
+                    </TouchableOpacity>
+                ))}
             </ScrollView>
         </SafeAreaView>
         

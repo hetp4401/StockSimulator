@@ -9,14 +9,14 @@ import {
 import ArticleLink from "../Components/ArticleLink";
 
 const Parser = require("fast-html-parser");
-const axios = require('axios');
-const cheerio = require('react-native-cheerio');
+const axios = require("axios");
+const cheerio = require("react-native-cheerio");
 
 const Feed = ({ navigation }) => {
   const [gainers, setgainers] = useState([]);
   const [losers, setlosers] = useState([]);
   const [actives, setactives] = useState([]);
-  const [trending , settrending] = useState([]);
+  const [trending, settrending] = useState([]);
   const [selected, setselected] = useState(1);
   const [links, setlinks] = useState([]);
 
@@ -60,33 +60,35 @@ const Feed = ({ navigation }) => {
   const get_gainers = () => get_yahoo("gainers", setgainers);
   const get_losers = () => get_yahoo("losers", setlosers);
   const get_most_actives = () => get_yahoo("most-active", setactives);
-  const get_trending = () =>{
-    axios.get("https://ca.finance.yahoo.com/trending-tickers")
-      .then( res =>{
-          const $ = cheerio.load(res.data)
-          const trending = [];
-         
-          $('.yfinlist-table').children().last().children().each((i, elem)=>{
-              const ticker = $(elem).children().first().text();
-              const name = $(elem).children().eq(1).text();
-              const price = $(elem).children().eq(2).text();
-              const volume = $(elem).children().eq(6).text();
-              const vchange = $(elem).children().eq(4).text();
-              const pchange = $(elem).children().eq(5).text();
-             
-              trending[i] = {
-                  ticker,
-                  name,
-                  price,
-                  volume,
-                  vchange,
-                  pchange,
-              };
-          });
-        settrending(trending);
-      })
-  }
- 
+  const get_trending = () => {
+    axios.get("https://ca.finance.yahoo.com/trending-tickers").then((res) => {
+      const $ = cheerio.load(res.data);
+      const trending = [];
+
+      $(".yfinlist-table")
+        .children()
+        .last()
+        .children()
+        .each((i, elem) => {
+          const ticker = $(elem).children().first().text();
+          const name = $(elem).children().eq(1).text();
+          const price = $(elem).children().eq(2).text();
+          const volume = $(elem).children().eq(6).text();
+          const vchange = $(elem).children().eq(4).text();
+          const pchange = $(elem).children().eq(5).text();
+
+          trending[i] = {
+            ticker,
+            name,
+            price,
+            volume,
+            vchange,
+            pchange,
+          };
+        });
+      settrending(trending);
+    });
+  };
 
   const get_news = (query) => {
     fetch("https://www.bing.com/news/search?q=" + query)
@@ -177,48 +179,53 @@ const Feed = ({ navigation }) => {
         </Text>
       </View>
 
-      {(selected == 1 ? actives : selected == 2 ? losers : selected == 3 ? trending : gainers).map(
-        (x, i) => (
-          <TouchableOpacity
-            key={i}
-            onPress={() => navigation.navigate("stock", { x })}
-            style={styles.stock}
+      {(selected == 1
+        ? actives
+        : selected == 2
+        ? losers
+        : selected == 3
+        ? trending
+        : gainers
+      ).map((x, i) => (
+        <TouchableOpacity
+          key={i}
+          onPress={() => navigation.navigate("stock", { x })}
+          style={styles.stock}
+        >
+          <Text style={{ width: "30%", marginLeft: 20, color: "#474747" }}>
+            {x.ticker}
+          </Text>
+          <Text
+            style={{
+              width: "23%",
+              textAlign: "right",
+              color: "#474747",
+            }}
           >
-            <Text style={{ width: "30%", marginLeft: 20, color: "#474747" }}>
-              {x.ticker}
-            </Text>
-            <Text
-              style={{
-                width: "23%",
-                textAlign: "right",
-                color: "#474747",
-              }}
-            >
-              {x.price}
-            </Text>
-            <Text
-              style={{
-                ...{ width: "23%", textAlign: "right", color: "#474747" },
-                ...(x.pchange.includes("+")
-                  ? { color: "green" }
-                  : { color: "red" }),
-              }}
-            >
-              {x.pchange}
-            </Text>
-            <Text
-              style={{
-                width: "23%",
-                textAlign: "right",
-                marginRight: 20,
-                color: "#474747",
-              }}
-            >
-              {x.volume}
-            </Text>
-          </TouchableOpacity>
-        )
-      )}
+            {x.price}
+          </Text>
+          <Text
+            style={{
+              ...{ width: "23%", textAlign: "right", color: "#474747" },
+              ...(x.pchange.includes("+")
+                ? { color: "green" }
+                : { color: "red" }),
+            }}
+          >
+            {x.pchange}
+          </Text>
+          <Text
+            style={{
+              width: "23%",
+              textAlign: "right",
+              marginRight: 20,
+              color: "#474747",
+            }}
+          >
+            {x.volume}
+          </Text>
+        </TouchableOpacity>
+      ))}
 
       <Text style={{ marginLeft: 20, marginTop: 30 }}>Latest News</Text>
 

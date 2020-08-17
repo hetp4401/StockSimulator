@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Slid } from "react";
 import {
   View,
   Text,
@@ -8,13 +8,16 @@ import {
   ActivityIndicator,
   Dimensions,
   Button,
-  Alert
+  Alert,
+  Slider,
 } from "react-native";
 import { av_key } from "../config";
 import {db,auth} from "../firebase"
 import Chart from "./Chart";
 import ArticleLink from "./ArticleLink";
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { getBalance } from "../firebase";
+import firebase from "firebase"
 
 const Parser = require("fast-html-parser");
 
@@ -37,6 +40,19 @@ const Stock = ({ route, navigation }) => {
 
   const [selected, setselected] = useState(5);
 
+  const check_favourite = () =>{
+    db.collection("users").doc(auth().currentUser.uid).get()
+      .then(doc =>{
+        doc.data().watchlist.map((x,i)=> {
+          if (x.ticker === ticker){
+            console.log(x.ticker);
+            setfavourite(true);
+          };
+        });
+    });
+    console.log(favourite + "on check")
+  }
+  
   const get_intraday = (interval) => {
     fetch(
       "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=" +
@@ -117,16 +133,47 @@ const Stock = ({ route, navigation }) => {
     Alert.alert(
       `${ticker} ${!favourite ? 'added to' : 'removed from'} Watchlist`
     )
+
+    console.log(favourite +" on handlechange")
     
-    db.ref("users/" + auth().currentUser.uid + "/watchlist").set({
-      watchlist : ""
-    });
+    if(!favourite) {
+      db.collection("users")
+      .doc(auth().currentUser.uid)
+      .update({
+        watchlist : firebase.firestore.FieldValue.arrayUnion({
+          ticker,
+          name,
+          volume,
+          price,
+        }),
+      })
+      .then(() => {})
+      .catch(function (error) {
+        console.error(error);
+      });
+    }else{
+      db.collection("users")
+      .doc(auth().currentUser.uid)
+      .update({
+        watchlist : firebase.firestore.FieldValue.arrayRemove({
+          ticker,
+          name,
+          volume,
+          price,
+        }),
+      })
+      .then(() => {})
+      .catch(function (error) {
+        console.error(error);
+      });
+    }
   };
 
   useEffect(() => {
     get_intraday(5);
     get_quote();
     get_news();
+    check_favourite();
   }, []);
 
   return loading ? (
@@ -190,11 +237,18 @@ const Stock = ({ route, navigation }) => {
         />
 
         <Button
-          title= 'Add to watchlist'
+          title= {!favourite ?'Add to watchlist' : 'Remove from watchlist'}
           onPress = {handleChange} 
         />
       </View> 
 
+      <Slider
+        style={{ width: 200, height: 40 }}
+        minimumValue={0}
+        maximumValue={1}
+        minimumTrackTintColor="#FFFFFF"
+        maximumTrackTintColor="#000000"
+      />
 
       <Text style={{ marginLeft: 20, marginTop: 30 }}>Latest News</Text>
 

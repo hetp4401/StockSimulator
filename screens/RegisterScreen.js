@@ -22,8 +22,22 @@ const LoginScreen = (props) => {
       .createUserWithEmailAndPassword(email, password)
       .then((res) => {
         props.navigation.navigate("inApp", {});
+        console.log(res);
       })
       .catch((err) => Alert.alert(JSON.stringify(err)));
+      
+      db.collection("users")
+        .doc(auth().currentUser.uid)
+        .set({
+          balance: 10000,
+          watchlist: [],
+          portfolio: [],
+          history: [],
+        })
+        .then(() => {})
+        .catch(function (error) {
+          console.error(error);
+        });
   };
 
   return (
@@ -101,7 +115,7 @@ const styles = StyleSheet.create({
   signup: {
     alignItems: "center",
     justifyContent: "center",
-  }
+  },
 });
 
 export default LoginScreen;

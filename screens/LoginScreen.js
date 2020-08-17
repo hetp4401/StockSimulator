@@ -11,7 +11,7 @@ import {
 
 import { Ionicons } from "@expo/vector-icons";
 
-import { auth } from "../firebase";
+import { auth, db } from "../firebase";
 
 const LoginScreen = (props) => {
   const [email, setemail] = useState("");
@@ -33,7 +33,10 @@ const LoginScreen = (props) => {
         setpassword("");
         props.navigation.navigate("inApp", {});
       })
-      .catch((err) => Alert.alert("Invalid credentials"));
+      .catch((err) => {
+        console.log(err);
+        Alert.alert("Invalid credentials");
+      });
   };
 
   return (
