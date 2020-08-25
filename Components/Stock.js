@@ -15,6 +15,8 @@ import { av_key } from "../config";
 import Chart from "./Chart";
 import ArticleLink from "./ArticleLink";
 import { db, auth } from "../firebase";
+import firebase from "firebase"
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import {
   LineChart,
   StackedAreaChart,
@@ -44,6 +46,7 @@ const Stock = ({ route, navigation }) => {
   const [low, setlow] = useState("");
   const [volume, setvolume] = useState("");
   const [change, setchange] = useState("");
+  const [favourite, setfavourite] = useState(false);
 
   const [links, setlinks] = useState([]);
 
@@ -51,6 +54,20 @@ const Stock = ({ route, navigation }) => {
   const [loading2, setloading2] = useState(true);
 
   const [selected, setselected] = useState(5);
+
+  const check_favourite = () =>{
+    db.collection("users").doc(auth().currentUser.uid).get()
+      .then(doc =>{
+        doc.data().watchlist.map((x,i)=> {
+          if (x.ticker === ticker){
+            console.log(x.ticker);
+            setfavourite(true);
+          };
+        });
+    });
+    console.log(favourite + "on check")
+  }
+ 
 
   const get_intraday = (interval) => {
     fetch(
@@ -199,11 +216,54 @@ const Stock = ({ route, navigation }) => {
       
   };
 
+  const handleChange =() =>{
+    setfavourite(prevState => !prevState);
+    Alert.alert(
+      `${ticker} ${!favourite ? 'added to' : 'removed from'} Watchlist`
+    )
+  
+    console.log(favourite +" on handlechange")
+   
+    if(!favourite) {
+      db.collection("users")
+      .doc(auth().currentUser.uid)
+      .update({
+        watchlist : firebase.firestore.FieldValue.arrayUnion({
+          ticker,
+          name,
+          volume,
+          price,
+        }),
+      })
+      .then(() => {})
+      .catch(function (error) {
+        console.error(error);
+      });
+    }else{
+      db.collection("users")
+      .doc(auth().currentUser.uid)
+      .update({
+        watchlist : firebase.firestore.FieldValue.arrayRemove({
+          ticker,
+          name,
+          volume,
+          price,
+        }),
+      })
+      .then(() => {})
+      .catch(function (error) {
+        console.error(error);
+      });
+    }
+  };
+ 
+
   useEffect(() => {
     get_intraday(5);
     get_quote();
     //get_news();
     update_data();
+    check_favourite();
   }, []);
 
   const Gradient = () => (
@@ -364,6 +424,20 @@ const Stock = ({ route, navigation }) => {
           )}
         </View>
       </View>
+
+      <View style = {{alignItems: "center", display: "flex", flexDirection: "row" ,alignContent:"center", justifyContent:"center" }}>
+       <Ionicons
+         name={favourite ? "ios-star" : "ios-star-outline"}
+         size ={30}
+         color={'blue'}
+         onPress = {handleChange}
+       />
+ 
+       <Button
+         title= {!favourite ?'Add to watchlist' : 'Remove from watchlist'}
+         onPress = {handleChange}
+       />
+     </View>
 
       <Text style={{ marginLeft: 20, marginTop: 30 }}>Latest News</Text>
 
