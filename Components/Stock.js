@@ -10,6 +10,7 @@ import {
   Slider,
   Alert,
   Button,
+  SafeAreaView
 } from "react-native";
 import { av_key } from "../config";
 import Chart from "./Chart";
@@ -22,8 +23,11 @@ import {
   StackedAreaChart,
   AreaChart,
   Grid,
+  YAxis,
 } from "react-native-svg-charts";
 import { ClipPath, Defs, LinearGradient, Rect, Stop } from "react-native-svg";
+import { BorderlessButton } from "react-native-gesture-handler";
+import { inherits } from "util";
 
 const Parser = require("fast-html-parser");
 
@@ -161,7 +165,6 @@ const Stock = ({ route, navigation }) => {
       .doc(auth().currentUser.uid)
       .update(target)
       .then(() => {
-        console.log("updated");
         update_data();
         Alert.alert(
           "Bought " +
@@ -221,8 +224,6 @@ const Stock = ({ route, navigation }) => {
     Alert.alert(
       `${ticker} ${!favourite ? 'added to' : 'removed from'} Watchlist`
     )
-  
-    console.log(favourite +" on handlechange")
    
     if(!favourite) {
       db.collection("users")
@@ -285,177 +286,253 @@ const Stock = ({ route, navigation }) => {
       style={{ marginTop: Dimensions.get("window").height * 0.5 }}
     />
   ) : (
-    <ScrollView>
-      <View style={{ marginTop: 50 }}></View>
-      <Text>{ticker + " - " + name}</Text>
-      <View style={{ alignItems: "center", marginTop: 30 }}>
-        <TouchableOpacity onPress={() => change_select(1)}>
-          <Text style={selected == 1 ? { color: "red" } : { color: "black" }}>
-            1min
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => change_select(5)}>
-          <Text style={selected == 5 ? { color: "red" } : { color: "black" }}>
-            5min
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => change_select(15)}>
-          <Text style={selected == 15 ? { color: "red" } : { color: "black" }}>
-            15min
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => change_select(30)}>
-          <Text style={selected == 30 ? { color: "red" } : { color: "black" }}>
-            30min
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => change_select(60)}>
-          <Text style={selected == 60 ? { color: "red" } : { color: "black" }}>
-            60min
-          </Text>
-        </TouchableOpacity>
-      </View>
-      <Chart slables={slables} prices={prices}></Chart>
+    <SafeAreaView>
+      <ScrollView style ={{backgroundColor: "white"}}>
+        <Text style = {{fontFamily: "Arial", fontWeight : "bold", fontSize: 15, margin: 10}}>{ticker + " - " + name}</Text>
 
-      <AreaChart
-        style={{ height: 300 }}
-        data={prices}
-        contentInset={{ top: 30, bottom: 30 }}
-        svg={{
-          fill: "url(#gradient)",
-          stroke: "rgb(117, 31, 255)",
-          strokeWidth: 3,
-        }}
-        showGrid={false}
-      >
-        <Gradient />
-      </AreaChart>
+        <View style={{ height: 300, flexDirection : 'row'}} >
+          <YAxis
+            data={prices}
+            contentInset={{ top: 30, bottom: 30 }}
+            numberOfTicks={10}
+            svg={{
+                fill: 'grey',
+                fontSize: 10,
+            }}
+          />
+          <LineChart
+            style={{ height: 300, flex: 1, marginLeft: 16}}
+            data={prices}
+            contentInset={{ top: 30, bottom: 30 }}
+            svg={{
+              fill: "url(#gradient)",
+              stroke: "rgb(117, 31, 255)",
+              strokeWidth: 3,
+            }}
+            showGrid={ true }
+          >
+            <Gradient />
+            <Grid/>
+          </LineChart>  
+          
+        </View>
 
-      <View style={{ alignItems: "center" }}>
-        <Text>{"price - " + price}</Text>
-        <Text>{"high - " + high}</Text>
-        <Text>{"low - " + low}</Text>
-        <Text>{"volume - " + volume}</Text>
-        <Text
-          style={change.includes("-") ? { color: "red" } : { color: "green" }}
-        >
-          {change}
-        </Text>
-        <View>
-          <View style={{ flexDirection: "row", justifyContent: "center" }}>
-            <TouchableOpacity>
-              <Text
-                style={buy ? { color: "green", margin: 20 } : { margin: 20 }}
-                onPress={() => {
-                  setbuy(true);
-                }}
-              >
-                Buy
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <Text
-                style={buy ? { margin: 20 } : { margin: 20, color: "red" }}
-                onPress={() => {
-                  setbuy(false);
-                }}
-              >
-                Sell
-              </Text>
-            </TouchableOpacity>
+        <View style={{ alignItems: "stretch", marginTop: 30, display: 'flex', flexDirection: 'row'}}>
+          
+          <View style= {{ alignItems: "center", alignSelf:'auto', flexGrow: 1, margin :10, backgroundColor : "white"}}>
+          
+            <Text style = {{marginBottom: 15, fontWeight : "bold"}}> {"Select an Interval" }</Text>
+        
+            <View style ={selected == 1 ? styles.activeIntervalBackground : {}}>
+              <TouchableOpacity onPress={() => change_select(1)}>
+                <Text style={selected == 1 ? styles.intervalActive : styles.intervalInactive} >
+                  1 min
+                </Text>
+              </TouchableOpacity>
+            </View>
+          
+            <View style ={selected == 5 ? styles.activeIntervalBackground : {}}>
+              <TouchableOpacity onPress={() => change_select(5)}>
+                <Text style={selected == 5 ? styles.intervalActive : styles.intervalInactive}>
+                  5 min
+                </Text>
+              </TouchableOpacity>
+            </View>
+            
+            <View style ={selected == 15 ? styles.activeIntervalBackground : {}}>
+              <TouchableOpacity onPress={() => change_select(15)}>
+                <Text style={selected == 15 ? styles.intervalActive : styles.intervalInactive}>
+                  15 min
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style ={selected == 30 ? styles.activeIntervalBackground : {}}>
+              <TouchableOpacity onPress={() => change_select(30)}>
+                <Text style={selected == 30 ? styles.intervalActive : styles.intervalInactive}>
+                  30 min
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style ={selected == 60 ? styles.activeIntervalBackground : {}}>
+              <TouchableOpacity onPress={() => change_select(60)}>
+                <Text style={selected == 60 ? styles.intervalActive : styles.intervalInactive}>
+                  60 min
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          <View style = {{display: "flex", alignItems:'center', justifyContent: "center",flexGrow: 1, margin: 10, backgroundColor: "#edeef2", borderRadius: 15}}>
+            <Text style ={{fontFamily: "Arial", fontSize: 16, fontWeight: "normal" }}>{"Price - " + price}</Text>
+            <Text style ={{fontFamily: "Arial", fontSize: 16, fontWeight: "normal"}} >{"High - " + high}</Text>
+            <Text style ={{fontFamily: "Arial", fontSize: 16, fontWeight: "normal"}} >{"Low - " + low}</Text>
+            <Text style ={{fontFamily: "Arial", fontSize: 16, fontWeight: "normal"}} >{"Volume - " + volume}</Text>
+            <Text
+              style= {change.includes("-") ? { color: "red",fontFamily: "Arial", fontSize: 16, fontWeight: "normal" } : {color: "green",fontFamily: "Arial", fontSize: 16, fontWeight: "normal"}}
+            >
+              {change}
+            </Text>
+          </View>
+        </View>
+    
+
+        <View style={{ alignItems: "center" }}>
+      
+          <View>
+            <View style={{ flexDirection: "row", justifyContent: "center" }}>
+              <TouchableOpacity>
+                <Text
+                  style={buy ? { color: "green", margin: 20 } : { margin: 20 }}
+                  onPress={() => {
+                    setbuy(true);
+                  }}
+                >
+                  Buy
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity>
+                <Text
+                  style={buy ? { margin: 20 } : { margin: 20, color: "red" }}
+                  onPress={() => {
+                    setbuy(false);
+                  }}
+                >
+                  Sell
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          <View style={{ margin: 20 }}>
+            {buy ? (
+              <View>
+                <Text>Balance: ${balance}</Text>
+                <Slider
+                  style={{ width: 200, height: 40 }}
+                  minimumValue={0}
+                  maximumValue={balance / price}
+                  onValueChange={(val) => {
+                    setsliderb(val);
+                  }}
+                />
+                <Text>Shares: {sliderb.toFixed(2)}</Text>
+                <Text>Amount: ${(sliderb * price).toFixed(2)}</Text>
+                
+                <View style ={{
+                  backgroundColor: "green",
+                  width: 40,
+                  padding: 5,
+                  borderRadius: 5
+                }}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      buystock();
+                    }}
+                  >
+                    <Text
+                      style={{
+                        color: "white",
+                        fontWeight: "bold"
+                      }}
+                    >
+                      BUY
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            ) : (
+              <View>
+                <Text>Amount: {owned}</Text>
+                <Slider
+                  style={{ width: 200, height: 40 }}
+                  minimumValue={0}
+                  maximumValue={owned}
+                  onValueChange={(val) => {
+                    setsliders(val);
+                  }}
+                />
+                <Text>Shares: {sliders.toFixed(2)}</Text>
+                <Text>Amount: ${(sliders * price).toFixed(2)}</Text>
+                
+                <View style={{
+                  backgroundColor: "red",
+                  width: 50,
+                  padding: 5,
+                  borderRadius: 5
+                }}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      sellstock();
+                    }}
+                  >
+                    <Text
+                      style={{ color: "white", fontWeight: 'bold'}}
+                    >
+                      SELL
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            )}
           </View>
         </View>
 
-        <View style={{ margin: 20 }}>
-          {buy ? (
-            <View>
-              <Text>Balance: ${balance}</Text>
-              <Slider
-                style={{ width: 200, height: 40 }}
-                minimumValue={0}
-                maximumValue={balance / price}
-                onValueChange={(val) => {
-                  setsliderb(val);
-                }}
-              />
-              <Text>Shares: {sliderb.toFixed(2)}</Text>
-              <Text>Amount: ${(sliderb * price).toFixed(2)}</Text>
-              <TouchableOpacity
-                onPress={() => {
-                  buystock();
-                }}
-              >
-                <Text
-                  style={{
-                    color: "white",
-                    backgroundColor: "green",
-                    width: 30,
-                  }}
-                >
-                  BUY
-                </Text>
-              </TouchableOpacity>
-            </View>
-          ) : (
-            <View>
-              <Text>Amount: {owned}</Text>
-              <Slider
-                style={{ width: 200, height: 40 }}
-                minimumValue={0}
-                maximumValue={owned}
-                onValueChange={(val) => {
-                  setsliders(val);
-                }}
-              />
-              <Text>Shares: {sliders.toFixed(2)}</Text>
-              <Text>Amount: ${(sliders * price).toFixed(2)}</Text>
-              <TouchableOpacity
-                onPress={() => {
-                  sellstock();
-                }}
-              >
-                <Text
-                  style={{ color: "white", backgroundColor: "red", width: 40 }}
-                >
-                  SELL
-                </Text>
-              </TouchableOpacity>
-            </View>
-          )}
-        </View>
-      </View>
-
-      <View style = {{alignItems: "center", display: "flex", flexDirection: "row" ,alignContent:"center", justifyContent:"center" }}>
-       <Ionicons
-         name={favourite ? "ios-star" : "ios-star-outline"}
-         size ={30}
-         color={'blue'}
-         onPress = {handleChange}
-       />
- 
-       <Button
-         title= {!favourite ?'Add to watchlist' : 'Remove from watchlist'}
-         onPress = {handleChange}
-       />
-     </View>
-
-      <Text style={{ marginLeft: 20, marginTop: 30 }}>Latest News</Text>
-
-      {/* <View>
-        {loading2 ? (
-          <ActivityIndicator
-            size="small"
-            color="#0000ff"
-            style={{ marginTop: 20 }}
+        <View style = {{alignItems: "center", display: "flex", flexDirection: "row" ,alignContent:"center", justifyContent:"center",}}>
+          <Ionicons
+            name={favourite ? "ios-star" : "ios-star-outline"}
+            size ={30}
+            color={'blue'}
+            onPress = {handleChange}
           />
-        ) : (
-          links.map((x, i) => {
-            return <ArticleLink x={x} key={i} />;
-          })
-        )}
-      </View> */}
-    </ScrollView>
+    
+          <Button
+            title= {!favourite ?'Add to watchlist' : 'Remove from watchlist'}
+            onPress = {handleChange}
+          />
+        </View>
+
+        <Text style={{ marginLeft: 20, marginTop: 30 }}>Latest News</Text>
+
+        { <View>
+          {loading2 ? (
+            <ActivityIndicator
+              size="small"
+              color="#0000ff"
+              style={{ marginTop: 20 }}
+            />
+          ) : (
+            links.map((x, i) => {
+              return <ArticleLink x={x} key={i} />;
+            })
+          )}
+        </View> }
+      </ScrollView>
+    </SafeAreaView>
   );
 };
+const styles = StyleSheet.create({
+  intervalActive: {
+    fontWeight : "bold",
+    fontFamily: "Arial", 
+    fontSize: 20,
+    color: '#000',
+    
+  },
+  intervalInactive: {
+    fontWeight : "normal",
+    fontFamily: "Arial", 
+    fontSize: 15
+  },
+  activeIntervalBackground: {
+    paddingVertical :5,
+    paddingHorizontal: 15,
+    color: '#000',
+    backgroundColor: '#edeef2',
+    borderRadius: 10,
+  },
+  
+})
 
 export default Stock;

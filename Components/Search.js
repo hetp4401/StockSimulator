@@ -42,7 +42,7 @@ const Search = ({ navigation }) => {
   };
 
   return (
-    <View>
+    <View style = {{backgroundColor: "FFF"}}>
       <TextInput
         style={styles.input}
         placeholder="search stock"

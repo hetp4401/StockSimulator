@@ -13,7 +13,7 @@ const WatchListScreen = () => {
                 headerShown: true,
             }}
         >
-            <watchListStack.Screen name="watchlist" component={WatchList} />
+            <watchListStack.Screen name="Watchlist" component={WatchList} />
             <watchListStack.Screen name="stock" component={Stock} />
         </watchListStack.Navigator>
     )
