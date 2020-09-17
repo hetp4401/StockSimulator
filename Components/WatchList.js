@@ -11,9 +11,7 @@ import {
  Dimensions
 } from "react-native";
  
-import {auth, db} from "../firebase";
-import { set, color } from "react-native-reanimated"; 
- 
+import {auth, db} from "../firebase"; 
  
 const WatchList = ({navigation}) => {
    const [favourites,setFavourites] = useState([]);
