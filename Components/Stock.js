@@ -118,6 +118,8 @@ const Stock = ({ route, navigation }) => {
         setlow(vals[3]);
         setvolume(vals[5]);
         setchange(vals[9]);
+      }).catch(err =>{
+        console.log(err);
       });
   };
 
@@ -260,9 +262,9 @@ const Stock = ({ route, navigation }) => {
  
 
   useEffect(() => {
-    get_intraday(5);
+    get_intraday(selected);
     get_quote();
-    //get_news();
+    get_news();
     update_data();
     check_favourite();
   }, []);
