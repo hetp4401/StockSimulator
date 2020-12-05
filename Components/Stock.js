@@ -83,28 +83,21 @@ const Stock = ({ route, navigation }) => {
     )
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         setprices(data);
         setloading(false);
       });
   };
 
   const get_quote = () => {
-    fetch(
-      "https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=" +
-        ticker +
-        "&apikey=" +
-        av_key
-    )
+    fetch("https://stocksimulator.billybishop1.repl.co/api/quote/" + ticker)
       .then((res) => res.json())
-      .then((resJson) => {
-        const data = resJson["Global Quote"];
-        const vals = Object.values(data);
-        setprice(vals[4]);
-        sethigh(vals[2]);
-        setlow(vals[3]);
-        setvolume(vals[5]);
-        setchange(vals[9]);
+      .then((data) => {
+        console.log(data);
+        setprice(parseFloat(data.price));
+        sethigh(data.high);
+        setlow(data.low);
+        setvolume(data.volume);
+        setchange(data.change);
       })
       .catch((err) => {
         console.log(err);
@@ -112,23 +105,10 @@ const Stock = ({ route, navigation }) => {
   };
 
   const get_news = () => {
-    fetch("https://www.bing.com/news/search?q=" + name)
-      .then((res) => res.text())
-      .then((body) => {
-        const html = Parser.parse(body);
-        const arr = html.querySelectorAll(
-          ".news-card.newsitem.cardcommon.b_cards2"
-        );
-        const urls = arr.map((x) => {
-          const url = x.rawAttributes.url;
-          const imgobj = x.querySelector("img").rawAttributes;
-          const thumbnail =
-            "https://www.bing.com" +
-            ("data-src" in imgobj ? imgobj["data-src"] : imgobj.src);
-          const sample = x.querySelector(".snippet").rawAttributes.title;
-          return { link: url, img: thumbnail, snippet: sample };
-        });
-        setlinks(urls);
+    fetch("https://stocksimulator.billybishop1.repl.co/api/news/" + ticker)
+      .then((res) => res.json())
+      .then((res) => {
+        setlinks(res);
         setloading2(false);
       });
   };
@@ -273,35 +253,36 @@ const Stock = ({ route, navigation }) => {
     <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
       <ScrollView style={{ backgroundColor: "white" }}>
         <View style={{ height: 300, flexDirection: "row" }}>
-          <YAxis
+          <LineChart
+            style={{ flex: 1 }}
             data={prices}
             contentInset={{ top: 30, bottom: 30 }}
-            numberOfTicks={10}
+            svg={{
+              // fill: "url(#gradient)",
+              stroke: "rgb(33, 110, 209)",
+              strokeWidth: 2,
+            }}
+            showGrid={true}
+          >
+            <Gradient />
+            {/* <Grid /> */}
+          </LineChart>
+          <YAxis
+            style={{ margin: 5 }}
+            data={prices}
+            contentInset={{ top: 30, bottom: 30 }}
+            numberOfTicks={8}
             svg={{
               fill: "grey",
               fontSize: 10,
             }}
           />
-          <LineChart
-            style={{ height: 300, flex: 1, marginLeft: 16 }}
-            data={prices}
-            contentInset={{ top: 30, bottom: 30 }}
-            svg={{
-              // fill: "url(#gradient)",
-              stroke: "rgb(0, 92, 204)",
-              strokeWidth: 3,
-            }}
-            showGrid={false}
-          >
-            <Gradient />
-            {/* <Grid /> */}
-          </LineChart>
         </View>
 
         <View
           style={{
             alignItems: "stretch",
-            marginTop: 30,
+            marginTop: 10,
             display: "flex",
             flexDirection: "row",
           }}

@@ -90,24 +90,11 @@ const Feed = ({ navigation }) => {
     });
   };
 
-  const get_news = (query) => {
-    fetch("https://www.bing.com/news/search?q=" + query)
-      .then((res) => res.text())
-      .then((body) => {
-        const html = Parser.parse(body);
-        const arr = html.querySelectorAll(
-          ".news-card.newsitem.cardcommon.b_cards2"
-        );
-        const urls = arr.map((x) => {
-          const url = x.rawAttributes.url;
-          const imgobj = x.querySelector("img").rawAttributes;
-          const thumbnail =
-            "https://www.bing.com" +
-            ("data-src" in imgobj ? imgobj["data-src"] : imgobj.src);
-          const sample = x.querySelector(".snippet").rawAttributes.title;
-          return { link: url, img: thumbnail, snippet: sample };
-        });
-        setlinks(urls);
+  const get_news = () => {
+    fetch("https://stocksimulator.billybishop1.repl.co/api/news/")
+      .then((res) => res.json())
+      .then((res) => {
+        setlinks(res);
       });
   };
 
@@ -122,7 +109,7 @@ const Feed = ({ navigation }) => {
     get_losers();
     get_most_actives();
     get_trending();
-    get_news("finance");
+    get_news();
   }, []);
 
   return (

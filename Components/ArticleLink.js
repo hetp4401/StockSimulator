@@ -23,29 +23,34 @@ const ArticleLink = ({ x }) => {
 
   return (
     <TouchableOpacity style={styles.card} onPress={handlePress}>
-      <Text style={{ marginLeft: 7, marginTop: 4 }}>{x.snippet}</Text>
       <Image
         source={{
           uri: x.img,
         }}
         style={{
           height: 200,
-          resizeMode: "stretch",
           margin: 5,
-          borderRadius: 4,
+          borderRadius: 8,
         }}
       />
+      <Text style={{ marginLeft: 7, marginTop: 4, fontFamily: "Arial" }}>
+        {x.snippet}
+      </Text>
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
   card: {
+    padding: 4,
     marginTop: 12,
     marginLeft: 20,
     marginRight: 20,
     backgroundColor: "white",
+    borderColor: "#edeef2",
+    borderWidth: 1,
     borderRadius: 15,
+    justifyContent: "space-between",
   },
 });
 
