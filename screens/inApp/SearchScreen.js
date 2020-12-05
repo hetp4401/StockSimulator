@@ -10,7 +10,7 @@ const SearchScreen = () => {
   return (
     <searchStack.Navigator
       screenOptions={{
-        headerShown: false,
+        headerShown: true,
       }}
     >
       <searchStack.Screen name="search" component={Search} />

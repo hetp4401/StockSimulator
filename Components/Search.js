@@ -6,80 +6,68 @@ import {
   TextInput,
   Alert,
   TouchableOpacity,
+  ScrollView,
 } from "react-native";
-
-import { av_key } from "../config";
 
 const Search = ({ navigation }) => {
   const [stocks, setstocks] = useState([]);
-  const [search, setsearch] = useState("");
 
-  const topResults = () => {
+  const results = (search) => {
     if (search.length > 0) {
-      fetch(
-        "https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=" +
-          search +
-          "&apikey=" +
-          av_key
-      )
+      fetch("https://stocksimulator.billybishop1.repl.co/api/search/" + search)
         .then((res) => res.json())
-        .then((resJson) => {
-          const results = resJson["bestMatches"];
-          const top = results.map((x) => {
-            return {
-              ticker: x["1. symbol"],
-              name: x["2. name"],
-            };
-          });
-          setstocks(top);
+        .then((data) => {
+          setstocks(data);
         })
         .catch((error) => {
           Alert.alert(error);
         });
-    } else {
-      setsearch("");
     }
   };
 
   return (
-    <View>
+    <View style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
       <TextInput
         style={styles.input}
         placeholder="search stock"
-        onChangeText={(text) => setsearch(text)}
-        value={search}
+        onChangeText={(search) => {
+          results(search);
+        }}
       ></TextInput>
-      <View>
-        <TouchableOpacity
-          onPress={topResults}
-          style={{
-            marginTop: 30,
-            justifyContent: "center",
-            alignContent: "center",
-          }}
-        >
-          <Text
-            style={{
-              color: "red",
-              marginLeft: 20,
-            }}
-          >
-            SEARCH
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      <View>
+      <ScrollView>
         {stocks.map((x, i) => (
           <TouchableOpacity
-            style={styles.list}
+            style={styles.result}
             key={i}
             onPress={() => navigation.navigate("stock", { x })}
           >
-            <Text>{x.ticker + " - " + x.name}</Text>
+            <View>
+              <Text
+                style={{
+                  fontFamily: "Arial",
+                  fontSize: 20,
+                  fontWeight: "bold",
+                }}
+              >
+                {x.ticker}
+              </Text>
+              <Text style={{ fontFamily: "Arial", fontSize: 15 }}>
+                {x.name}
+              </Text>
+            </View>
+            <Text
+              style={{
+                fontFamily: "Arial",
+                fontSize: 20,
+                fontWeight: "normal",
+                textAlignVertical: "center",
+              }}
+            >
+              {x.exchange}
+            </Text>
           </TouchableOpacity>
         ))}
-      </View>
+      </ScrollView>
     </View>
   );
 };
@@ -89,6 +77,7 @@ const styles = StyleSheet.create({
     marginTop: 52,
     marginLeft: 20,
     marginRight: 20,
+    marginBottom: 20,
     height: 50,
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: "#BAB7C3",
@@ -100,6 +89,18 @@ const styles = StyleSheet.create({
   list: {
     marginTop: 20,
     marginLeft: 20,
+  },
+  result: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 1,
+    marginLeft: 20,
+    marginRight: 20,
+    marginBottom: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 15,
+    backgroundColor: "#edeef2",
   },
 });
 

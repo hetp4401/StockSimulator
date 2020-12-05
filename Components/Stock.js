@@ -10,14 +10,14 @@ import {
   Slider,
   Alert,
   Button,
-  SafeAreaView
+  SafeAreaView,
 } from "react-native";
 import { av_key } from "../config";
 import Chart from "./Chart";
 import ArticleLink from "./ArticleLink";
 import { db, auth } from "../firebase";
-import firebase from "firebase"
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import firebase from "firebase";
+import Ionicons from "react-native-vector-icons/Ionicons";
 import {
   LineChart,
   StackedAreaChart,
@@ -42,6 +42,7 @@ const Stock = ({ route, navigation }) => {
   const [buy, setbuy] = useState(true);
 
   const { ticker, name } = route.params.x;
+  navigation.setOptions({ title: ticker + " - " + name });
 
   const [slables, setslables] = useState([""]);
   const [prices, setprices] = useState([0]);
@@ -59,45 +60,31 @@ const Stock = ({ route, navigation }) => {
 
   const [selected, setselected] = useState(5);
 
-  const check_favourite = () =>{
-    db.collection("users").doc(auth().currentUser.uid).get()
-      .then(doc =>{
-        doc.data().watchlist.map((x,i)=> {
-          if (x.ticker === ticker){
+  const check_favourite = () => {
+    db.collection("users")
+      .doc(auth().currentUser.uid)
+      .get()
+      .then((doc) => {
+        doc.data().watchlist.map((x, i) => {
+          if (x.ticker === ticker) {
             console.log(x.ticker);
             setfavourite(true);
-          };
+          }
         });
-    });
-    console.log(favourite + "on check")
-  }
- 
+      });
+  };
 
   const get_intraday = (interval) => {
     fetch(
-      "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=" +
+      "https://stocksimulator.billybishop1.repl.co/api/chart/" +
         ticker +
-        "&interval=" +
-        interval +
-        "min&apikey=" +
-        av_key
+        "/" +
+        interval
     )
       .then((res) => res.json())
-      .then((resJson) => {
-        const raw_data = resJson["Time Series (" + interval + "min)"];
-        const processed_data = [];
-        const label_data = [];
-        var counter = 1;
-        for (const obj in raw_data) {
-          const price = raw_data[obj];
-          processed_data.unshift(parseFloat(price["1. open"]));
-          label_data.unshift(
-            counter % 20 == 0 || counter == 1 ? obj.substr(-8, 5) : ""
-          );
-          counter += 1;
-        }
-        setprices(processed_data);
-        setslables(label_data);
+      .then((data) => {
+        console.log(data);
+        setprices(data);
         setloading(false);
       });
   };
@@ -118,7 +105,8 @@ const Stock = ({ route, navigation }) => {
         setlow(vals[3]);
         setvolume(vals[5]);
         setchange(vals[9]);
-      }).catch(err =>{
+      })
+      .catch((err) => {
         console.log(err);
       });
   };
@@ -218,48 +206,46 @@ const Stock = ({ route, navigation }) => {
         setbalance(data["balance"]);
         setowned(ticker in data["portfolio"] ? data["portfolio"][ticker] : 0);
       });
-      
   };
 
-  const handleChange =() =>{
-    setfavourite(prevState => !prevState);
+  const handleChange = () => {
+    setfavourite((prevState) => !prevState);
     Alert.alert(
-      `${ticker} ${!favourite ? 'added to' : 'removed from'} Watchlist`
-    )
-   
-    if(!favourite) {
+      `${ticker} ${!favourite ? "added to" : "removed from"} Watchlist`
+    );
+
+    if (!favourite) {
       db.collection("users")
-      .doc(auth().currentUser.uid)
-      .update({
-        watchlist : firebase.firestore.FieldValue.arrayUnion({
-          ticker,
-          name,
-          volume,
-          price,
-        }),
-      })
-      .then(() => {})
-      .catch(function (error) {
-        console.error(error);
-      });
-    }else{
+        .doc(auth().currentUser.uid)
+        .update({
+          watchlist: firebase.firestore.FieldValue.arrayUnion({
+            ticker,
+            name,
+            volume,
+            price,
+          }),
+        })
+        .then(() => {})
+        .catch((error) => {
+          console.error(error);
+        });
+    } else {
       db.collection("users")
-      .doc(auth().currentUser.uid)
-      .update({
-        watchlist : firebase.firestore.FieldValue.arrayRemove({
-          ticker,
-          name,
-          volume,
-          price,
-        }),
-      })
-      .then(() => {})
-      .catch(function (error) {
-        console.error(error);
-      });
+        .doc(auth().currentUser.uid)
+        .update({
+          watchlist: firebase.firestore.FieldValue.arrayRemove({
+            ticker,
+            name,
+            volume,
+            price,
+          }),
+        })
+        .then(() => {})
+        .catch((error) => {
+          console.error(error);
+        });
     }
   };
- 
 
   useEffect(() => {
     get_intraday(selected);
@@ -273,11 +259,7 @@ const Stock = ({ route, navigation }) => {
     <Defs key={"gradient"}>
       <LinearGradient id={"gradient"} x1={"0%"} y1={"0%"} x2={"0%"} y2={"100%"}>
         <Stop offset={"0%"} stopColor={"rgb(134, 65, 244)"} stopOpacity={0.6} />
-        <Stop
-          offset={"2%"}
-          stopColor={"rgb(241, 241, 241)"}
-          stopOpacity={1}
-        />
+        <Stop offset={"2%"} stopColor={"rgb(241, 241, 241)"} stopOpacity={1} />
       </LinearGradient>
     </Defs>
   );
@@ -288,100 +270,197 @@ const Stock = ({ route, navigation }) => {
       style={{ marginTop: Dimensions.get("window").height * 0.5 }}
     />
   ) : (
-    <SafeAreaView>
-      <ScrollView style ={{backgroundColor: "white"}}>
-        <Text style = {{fontFamily: "Arial", fontWeight : "bold", fontSize: 15, margin: 10}}>{ticker + " - " + name}</Text>
-
-        <View style={{ height: 300, flexDirection : 'row'}} >
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
+      <ScrollView style={{ backgroundColor: "white" }}>
+        <View style={{ height: 300, flexDirection: "row" }}>
           <YAxis
             data={prices}
             contentInset={{ top: 30, bottom: 30 }}
             numberOfTicks={10}
             svg={{
-                fill: 'grey',
-                fontSize: 10,
+              fill: "grey",
+              fontSize: 10,
             }}
           />
           <LineChart
-            style={{ height: 300, flex: 1, marginLeft: 16}}
+            style={{ height: 300, flex: 1, marginLeft: 16 }}
             data={prices}
             contentInset={{ top: 30, bottom: 30 }}
             svg={{
-              fill: "url(#gradient)",
-              stroke: "rgb(117, 31, 255)",
+              // fill: "url(#gradient)",
+              stroke: "rgb(0, 92, 204)",
               strokeWidth: 3,
             }}
-            showGrid={ true }
+            showGrid={false}
           >
             <Gradient />
-            <Grid/>
-          </LineChart>  
-          
+            {/* <Grid /> */}
+          </LineChart>
         </View>
 
-        <View style={{ alignItems: "stretch", marginTop: 30, display: 'flex', flexDirection: 'row'}}>
-          
-          <View style= {{ alignItems: "center", alignSelf:'auto', flexGrow: 1, margin :10, backgroundColor : "white"}}>
-          
-            <Text style = {{marginBottom: 15, fontWeight : "bold"}}> {"Select an Interval" }</Text>
-        
-            <View style ={selected == 1 ? styles.activeIntervalBackground : {}}>
-              <TouchableOpacity onPress={() => change_select(1)}>
-                <Text style={selected == 1 ? styles.intervalActive : styles.intervalInactive} >
-                  1 min
+        <View
+          style={{
+            alignItems: "stretch",
+            marginTop: 30,
+            display: "flex",
+            flexDirection: "row",
+          }}
+        >
+          <View
+            style={{
+              alignItems: "center",
+              alignSelf: "auto",
+              flexGrow: 1,
+              margin: 10,
+              backgroundColor: "white",
+            }}
+          >
+            <Text style={{ marginBottom: 15, fontWeight: "bold" }}>
+              {" "}
+              {"Select an Interval"}
+            </Text>
+
+            <View style={selected == 2 ? styles.activeIntervalBackground : {}}>
+              <TouchableOpacity onPress={() => change_select(2)}>
+                <Text
+                  style={
+                    selected == 2
+                      ? styles.intervalActive
+                      : styles.intervalInactive
+                  }
+                >
+                  2 min
                 </Text>
               </TouchableOpacity>
             </View>
-          
-            <View style ={selected == 5 ? styles.activeIntervalBackground : {}}>
+
+            <View style={selected == 5 ? styles.activeIntervalBackground : {}}>
               <TouchableOpacity onPress={() => change_select(5)}>
-                <Text style={selected == 5 ? styles.intervalActive : styles.intervalInactive}>
+                <Text
+                  style={
+                    selected == 5
+                      ? styles.intervalActive
+                      : styles.intervalInactive
+                  }
+                >
                   5 min
                 </Text>
               </TouchableOpacity>
             </View>
-            
-            <View style ={selected == 15 ? styles.activeIntervalBackground : {}}>
+
+            <View style={selected == 15 ? styles.activeIntervalBackground : {}}>
               <TouchableOpacity onPress={() => change_select(15)}>
-                <Text style={selected == 15 ? styles.intervalActive : styles.intervalInactive}>
+                <Text
+                  style={
+                    selected == 15
+                      ? styles.intervalActive
+                      : styles.intervalInactive
+                  }
+                >
                   15 min
                 </Text>
               </TouchableOpacity>
             </View>
 
-            <View style ={selected == 30 ? styles.activeIntervalBackground : {}}>
+            <View style={selected == 30 ? styles.activeIntervalBackground : {}}>
               <TouchableOpacity onPress={() => change_select(30)}>
-                <Text style={selected == 30 ? styles.intervalActive : styles.intervalInactive}>
+                <Text
+                  style={
+                    selected == 30
+                      ? styles.intervalActive
+                      : styles.intervalInactive
+                  }
+                >
                   30 min
                 </Text>
               </TouchableOpacity>
             </View>
 
-            <View style ={selected == 60 ? styles.activeIntervalBackground : {}}>
+            <View style={selected == 60 ? styles.activeIntervalBackground : {}}>
               <TouchableOpacity onPress={() => change_select(60)}>
-                <Text style={selected == 60 ? styles.intervalActive : styles.intervalInactive}>
+                <Text
+                  style={
+                    selected == 60
+                      ? styles.intervalActive
+                      : styles.intervalInactive
+                  }
+                >
                   60 min
                 </Text>
               </TouchableOpacity>
             </View>
           </View>
 
-          <View style = {{display: "flex", alignItems:'center', justifyContent: "center",flexGrow: 1, margin: 10, backgroundColor: "#edeef2", borderRadius: 15}}>
-            <Text style ={{fontFamily: "Arial", fontSize: 16, fontWeight: "normal" }}>{"Price - " + price}</Text>
-            <Text style ={{fontFamily: "Arial", fontSize: 16, fontWeight: "normal"}} >{"High - " + high}</Text>
-            <Text style ={{fontFamily: "Arial", fontSize: 16, fontWeight: "normal"}} >{"Low - " + low}</Text>
-            <Text style ={{fontFamily: "Arial", fontSize: 16, fontWeight: "normal"}} >{"Volume - " + volume}</Text>
+          <View
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexGrow: 1,
+              margin: 10,
+              backgroundColor: "#edeef2",
+              borderRadius: 15,
+            }}
+          >
             <Text
-              style= {change.includes("-") ? { color: "red",fontFamily: "Arial", fontSize: 16, fontWeight: "normal" } : {color: "green",fontFamily: "Arial", fontSize: 16, fontWeight: "normal"}}
+              style={{
+                fontFamily: "Arial",
+                fontSize: 16,
+                fontWeight: "normal",
+              }}
+            >
+              {"Price - " + price}
+            </Text>
+            <Text
+              style={{
+                fontFamily: "Arial",
+                fontSize: 16,
+                fontWeight: "normal",
+              }}
+            >
+              {"High - " + high}
+            </Text>
+            <Text
+              style={{
+                fontFamily: "Arial",
+                fontSize: 16,
+                fontWeight: "normal",
+              }}
+            >
+              {"Low - " + low}
+            </Text>
+            <Text
+              style={{
+                fontFamily: "Arial",
+                fontSize: 16,
+                fontWeight: "normal",
+              }}
+            >
+              {"Volume - " + volume}
+            </Text>
+            <Text
+              style={
+                change.includes("-")
+                  ? {
+                      color: "red",
+                      fontFamily: "Arial",
+                      fontSize: 16,
+                      fontWeight: "normal",
+                    }
+                  : {
+                      color: "green",
+                      fontFamily: "Arial",
+                      fontSize: 16,
+                      fontWeight: "normal",
+                    }
+              }
             >
               {change}
             </Text>
           </View>
         </View>
-    
 
         <View style={{ alignItems: "center" }}>
-      
           <View>
             <View style={{ flexDirection: "row", justifyContent: "center" }}>
               <TouchableOpacity>
@@ -421,13 +500,15 @@ const Stock = ({ route, navigation }) => {
                 />
                 <Text>Shares: {sliderb.toFixed(2)}</Text>
                 <Text>Amount: ${(sliderb * price).toFixed(2)}</Text>
-                
-                <View style ={{
-                  backgroundColor: "green",
-                  width: 40,
-                  padding: 5,
-                  borderRadius: 5
-                }}>
+
+                <View
+                  style={{
+                    backgroundColor: "green",
+                    width: 40,
+                    padding: 5,
+                    borderRadius: 5,
+                  }}
+                >
                   <TouchableOpacity
                     onPress={() => {
                       buystock();
@@ -436,7 +517,7 @@ const Stock = ({ route, navigation }) => {
                     <Text
                       style={{
                         color: "white",
-                        fontWeight: "bold"
+                        fontWeight: "bold",
                       }}
                     >
                       BUY
@@ -457,21 +538,21 @@ const Stock = ({ route, navigation }) => {
                 />
                 <Text>Shares: {sliders.toFixed(2)}</Text>
                 <Text>Amount: ${(sliders * price).toFixed(2)}</Text>
-                
-                <View style={{
-                  backgroundColor: "red",
-                  width: 50,
-                  padding: 5,
-                  borderRadius: 5
-                }}>
+
+                <View
+                  style={{
+                    backgroundColor: "red",
+                    width: 50,
+                    padding: 5,
+                    borderRadius: 5,
+                  }}
+                >
                   <TouchableOpacity
                     onPress={() => {
                       sellstock();
                     }}
                   >
-                    <Text
-                      style={{ color: "white", fontWeight: 'bold'}}
-                    >
+                    <Text style={{ color: "white", fontWeight: "bold" }}>
                       SELL
                     </Text>
                   </TouchableOpacity>
@@ -481,60 +562,68 @@ const Stock = ({ route, navigation }) => {
           </View>
         </View>
 
-        <View style = {{alignItems: "center", display: "flex", flexDirection: "row" ,alignContent:"center", justifyContent:"center",}}>
+        <View
+          style={{
+            alignItems: "center",
+            display: "flex",
+            flexDirection: "row",
+            alignContent: "center",
+            justifyContent: "center",
+          }}
+        >
           <Ionicons
             name={favourite ? "ios-star" : "ios-star-outline"}
-            size ={30}
-            color={'blue'}
-            onPress = {handleChange}
+            size={30}
+            color={"blue"}
+            onPress={handleChange}
           />
-    
+
           <Button
-            title= {!favourite ?'Add to watchlist' : 'Remove from watchlist'}
-            onPress = {handleChange}
+            title={!favourite ? "Add to watchlist" : "Remove from watchlist"}
+            onPress={handleChange}
           />
         </View>
 
         <Text style={{ marginLeft: 20, marginTop: 30 }}>Latest News</Text>
 
-        { <View>
-          {loading2 ? (
-            <ActivityIndicator
-              size="small"
-              color="#0000ff"
-              style={{ marginTop: 20 }}
-            />
-          ) : (
-            links.map((x, i) => {
-              return <ArticleLink x={x} key={i} />;
-            })
-          )}
-        </View> }
+        {
+          <View>
+            {loading2 ? (
+              <ActivityIndicator
+                size="small"
+                color="#0000ff"
+                style={{ marginTop: 20 }}
+              />
+            ) : (
+              links.map((x, i) => {
+                return <ArticleLink x={x} key={i} />;
+              })
+            )}
+          </View>
+        }
       </ScrollView>
     </SafeAreaView>
   );
 };
 const styles = StyleSheet.create({
   intervalActive: {
-    fontWeight : "bold",
-    fontFamily: "Arial", 
+    fontWeight: "bold",
+    fontFamily: "Arial",
     fontSize: 20,
-    color: '#000',
-    
+    color: "#000",
   },
   intervalInactive: {
-    fontWeight : "normal",
-    fontFamily: "Arial", 
-    fontSize: 15
+    fontWeight: "normal",
+    fontFamily: "Arial",
+    fontSize: 15,
   },
   activeIntervalBackground: {
-    paddingVertical :5,
+    paddingVertical: 5,
     paddingHorizontal: 15,
-    color: '#000',
-    backgroundColor: '#edeef2',
+    color: "#000",
+    backgroundColor: "#edeef2",
     borderRadius: 10,
   },
-  
-})
+});
 
 export default Stock;
