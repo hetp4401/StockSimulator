@@ -251,12 +251,29 @@ const Stock = ({ route, navigation }) => {
     />
   ) : (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
-      <ScrollView style={{ backgroundColor: "white" }}>
-        <View style={{ height: 300, flexDirection: "row" }}>
+      <ScrollView style={{ flex: 1, backgroundColor: "white" }}>
+        <View style={{ height: 300, flexDirection: "row", marginTop: 20 }}>
+          <YAxis
+            style={{
+              margin: 5,
+              marginLeft: 10,
+              zIndex: 10,
+              position: "absolute",
+              height: "100%",
+              backgroundColor: "rgba(255, 255, 255, 0.9)",
+            }}
+            data={prices}
+            numberOfTicks={6}
+            svg={{
+              fill: "grey",
+              fontSize: 10,
+              strokeWidth: 3,
+            }}
+          />
           <LineChart
             style={{ flex: 1 }}
             data={prices}
-            contentInset={{ top: 30, bottom: 30 }}
+            //contentInset={{ top: 30, bottom: 30 }}
             svg={{
               // fill: "url(#gradient)",
               stroke: "rgb(33, 110, 209)",
@@ -265,18 +282,7 @@ const Stock = ({ route, navigation }) => {
             showGrid={true}
           >
             <Gradient />
-            {/* <Grid /> */}
           </LineChart>
-          <YAxis
-            style={{ margin: 5 }}
-            data={prices}
-            contentInset={{ top: 30, bottom: 30 }}
-            numberOfTicks={8}
-            svg={{
-              fill: "grey",
-              fontSize: 10,
-            }}
-          />
         </View>
 
         <View
@@ -310,7 +316,7 @@ const Stock = ({ route, navigation }) => {
                       : styles.intervalInactive
                   }
                 >
-                  2 min
+                  1d
                 </Text>
               </TouchableOpacity>
             </View>
@@ -324,7 +330,7 @@ const Stock = ({ route, navigation }) => {
                       : styles.intervalInactive
                   }
                 >
-                  5 min
+                  5d
                 </Text>
               </TouchableOpacity>
             </View>
@@ -338,7 +344,7 @@ const Stock = ({ route, navigation }) => {
                       : styles.intervalInactive
                   }
                 >
-                  15 min
+                  1m
                 </Text>
               </TouchableOpacity>
             </View>
@@ -352,7 +358,7 @@ const Stock = ({ route, navigation }) => {
                       : styles.intervalInactive
                   }
                 >
-                  30 min
+                  1y
                 </Text>
               </TouchableOpacity>
             </View>
@@ -366,7 +372,7 @@ const Stock = ({ route, navigation }) => {
                       : styles.intervalInactive
                   }
                 >
-                  60 min
+                  max
                 </Text>
               </TouchableOpacity>
             </View>
