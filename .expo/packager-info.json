@@ -3,8 +3,8 @@
   "expoServerPort": null,
   "packagerPort": null,
   "packagerPid": null,
-  "expoServerNgrokUrl": "https://d7-tgs.hetp4401.stocksimulator.exp.direct",
-  "packagerNgrokUrl": "https://packager.d7-tgs.hetp4401.stocksimulator.exp.direct",
-  "ngrokPid": 35412,
+  "expoServerNgrokUrl": null,
+  "packagerNgrokUrl": null,
+  "ngrokPid": null,
   "webpackServerPort": null
 }
