@@ -11,7 +11,7 @@ import {
 
 import { Ionicons } from "@expo/vector-icons";
 
-import { auth } from "../firebase";
+import { auth, db } from "../firebase";
 
 const LoginScreen = (props) => {
   const [email, setemail] = useState("");
@@ -21,6 +21,13 @@ const LoginScreen = (props) => {
     auth()
       .createUserWithEmailAndPassword(email, password)
       .then((res) => {
+        return db.collection("users").doc(res.user.uid).set({
+          balance: 10000,
+          watchlist: [],
+          history: [],
+        });
+      })
+      .then(() => {
         props.navigation.navigate("inApp", {});
         console.log(res);
       })
