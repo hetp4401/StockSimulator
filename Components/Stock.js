@@ -12,7 +12,7 @@ import {
   Button,
   SafeAreaView,
 } from "react-native";
-import { av_key } from "../config";
+//import { av_key } from "../config";
 import Chart from "./Chart";
 import ArticleLink from "./ArticleLink";
 import { db, auth } from "../firebase";

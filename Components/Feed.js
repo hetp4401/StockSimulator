@@ -114,43 +114,46 @@ const Feed = ({ navigation }) => {
 
   return (
     <ScrollView>
-      <View style={{ flexDirection: "row", justifyContent: "center" }}>
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "center",
+          backgroundColor: "white",
+          alignItems: "center",
+        }}
+      >
         <TouchableOpacity onPress={() => setselected(0)}>
           <Text
-            style={{
-              ...{ margin: 10 },
-              ...(selected == 0 ? { color: "orange" } : { color: "black" }),
-            }}
+            style={
+              selected == 0 ? styles.selectedOption : styles.nonSelectedOption
+            }
           >
             Gainers
           </Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => setselected(1)}>
           <Text
-            style={{
-              ...{ margin: 10 },
-              ...(selected == 1 ? { color: "orange" } : { color: "black" }),
-            }}
+            style={
+              selected == 1 ? styles.selectedOption : styles.nonSelectedOption
+            }
           >
             Most-Active
           </Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => setselected(2)}>
           <Text
-            style={{
-              ...{ margin: 10 },
-              ...(selected == 2 ? { color: "orange" } : { color: "black" }),
-            }}
+            style={
+              selected == 2 ? styles.selectedOption : styles.nonSelectedOption
+            }
           >
             Losers
           </Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => setselected(3)}>
           <Text
-            style={{
-              ...{ margin: 10 },
-              ...(selected == 3 ? { color: "orange" } : { color: "black" }),
-            }}
+            style={
+              selected == 3 ? styles.selectedOption : styles.nonSelectedOption
+            }
           >
             Trending
           </Text>
@@ -231,6 +234,17 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderTopWidth: 0,
     borderColor: "#ededed",
+    padding: 3,
+  },
+  selectedOption: {
+    margin: 10,
+    fontWeight: "bold",
+    color: "#0B132B",
+    fontSize: 18,
+  },
+  nonSelectedOption: {
+    margin: 10,
+    color: "grey",
   },
 });
 

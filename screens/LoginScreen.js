@@ -12,18 +12,19 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 
 import { auth, db } from "../firebase";
+import WatchListScreen from "./inApp/WatchListScreen";
 
 const LoginScreen = (props) => {
   const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
 
-  useEffect(() => {
-    setTimeout(() => {
-      if (auth().currentUser) {
-        props.navigation.navigate("inApp", {});
-      }
-    }, 1500);
-  }, []);
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     if (auth().currentUser) {
+  //       props.navigation.navigate("inApp", {});
+  //     }
+  //   }, 1500);
+  // }, []);
 
   const login = () => {
     auth()
@@ -42,13 +43,13 @@ const LoginScreen = (props) => {
   return (
     <View style={styles.container}>
       <View style={styles.circle} />
-      <View style={{ marginTop: 150 }}>
+      {/* <View style={{ marginTop: 150 }}>
         <Image
           source={require("../assets/logo.png")}
           style={{ width: 100, height: 100, alignSelf: "center" }}
         ></Image>
-      </View>
-      <View style={{ marginHorizontal: 32 }}>
+      </View> */}
+      <View style={{ marginHorizontal: 32, marginTop: 100 }}>
         <Text style={styles.header}>Login</Text>
         <TextInput
           style={styles.input}
@@ -59,6 +60,7 @@ const LoginScreen = (props) => {
         <TextInput
           style={styles.input}
           placeholder="password"
+          secureTextEntry={true}
           onChangeText={(text) => setpassword(text)}
           value={password}
         ></TextInput>
@@ -72,7 +74,11 @@ const LoginScreen = (props) => {
             style={styles.signup}
             onPress={() => props.navigation.navigate("Register", {})}
           >
-            <Text>SignUp</Text>
+            <View style={styles.signupButton}>
+              <Text style={{ color: "white" }}>
+                Don't have an accoumt? Sign Up Here
+              </Text>
+            </View>
           </TouchableOpacity>
         </View>
       </View>
@@ -115,13 +121,22 @@ const styles = StyleSheet.create({
     width: 70,
     height: 70,
     borderRadius: 35,
-    backgroundColor: "#9075E3",
+    backgroundColor: "#0B132B",
     alignItems: "center",
     justifyContent: "center",
   },
   signup: {
     alignItems: "center",
     justifyContent: "center",
+    marginTop: 100,
+    fontSize: 16,
+  },
+  signupButton: {
+    backgroundColor: "#0B132B",
+    padding: 15,
+    borderWidth: 1,
+    borderColor: "grey",
+    borderRadius: 100,
   },
 });
 

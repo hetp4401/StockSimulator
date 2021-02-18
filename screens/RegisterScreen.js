@@ -30,13 +30,7 @@ const LoginScreen = (props) => {
   return (
     <View style={styles.continaer}>
       <View style={styles.circle} />
-      <View style={{ marginTop: 150 }}>
-        <Image
-          source={require("../assets/logo.png")}
-          style={{ width: 100, height: 100, alignSelf: "center" }}
-        ></Image>
-      </View>
-      <View style={{ marginHorizontal: 32 }}>
+      <View style={{ marginHorizontal: 32, marginTop: 100 }}>
         <Text style={styles.header}>SignUp</Text>
         <TextInput
           style={styles.input}
@@ -48,6 +42,7 @@ const LoginScreen = (props) => {
           style={styles.input}
           placeholder="password"
           onChangeText={(text) => setpassword(text)}
+          secureTextEntry={true}
           value={password}
         ></TextInput>
         <View style={{ alignItems: "flex-end", marginTop: 64 }}>
@@ -95,7 +90,7 @@ const styles = StyleSheet.create({
     width: 70,
     height: 70,
     borderRadius: 35,
-    backgroundColor: "#9075E3",
+    backgroundColor: "#0B132B",
     alignItems: "center",
     justifyContent: "center",
   },
