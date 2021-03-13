@@ -12,7 +12,6 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 
 import { auth, db } from "../firebase";
-import WatchListScreen from "./inApp/WatchListScreen";
 
 const LoginScreen = (props) => {
   const [email, setemail] = useState("");
@@ -32,7 +31,7 @@ const LoginScreen = (props) => {
       .then((res) => {
         setemail("");
         setpassword("");
-        props.navigation.navigate("inApp", {});
+        props.navigation.replace("inApp");
       })
       .catch((err) => {
         console.log(err);

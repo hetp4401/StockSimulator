@@ -7,7 +7,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 
 const feedStack = createStackNavigator();
 
-const FeedScreen = () => {
+const FeedScreen = (props) => {
   return (
     <feedStack.Navigator
       screenOptions={{
@@ -25,23 +25,20 @@ const FeedScreen = () => {
           headerTitleStyle: {
             fontWeight: "bold",
           },
-          headerBackTitle: "Log Out",
-          headerLeft: (props) => (
-            <HeaderBackButton
-              {...props}
-              onPress={() => {
-                // auth()
-                //   .signOut()
-                //   .then((res) => {
-                //     console.log("SUCCSESS");
-                //   })
-                //   .catch((err) => {
-                //     console.log(err);
-                //   });
-                console.log("SUCCS");
-              }}
-            />
-          ),
+          // headerLeft: (props) => (
+          //   <HeaderBackButton
+          //     onPress={() => {
+          //       auth()
+          //         .signOut()
+          //         .then((res) => {
+
+          //         })
+          //         .catch((err) => {
+          //           console.log(err);
+          //         });
+          //     }}
+          //   />
+          // ),
         }}
       />
       <feedStack.Screen

@@ -26,6 +26,10 @@ const App = () => {
         screenOptions={{
           headerShown: false,
         }}
+        navigationOptions={{
+          title: "MyScreen",
+          headerLeft: null,
+        }}
       >
         <RootStack.Screen name="Login" component={LoginScreen} />
         <RootStack.Screen name="Register" component={RegisterScreen} />
