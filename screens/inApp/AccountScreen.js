@@ -1,37 +1,37 @@
 import React from "react";
-import WatchList from "../../Components/WatchList";
 import Stock from "../../Components/Stock";
-import { HeaderBackButton } from "@react-navigation/stack";
+import { auth } from "../../firebase";
 import { createStackNavigator } from "@react-navigation/stack";
-const watchListStack = createStackNavigator();
+import Account from "../../Components/Account";
 
-const WatchListScreen = () => {
+const accountStack = createStackNavigator();
+
+const AccountScreen = (props) => {
   return (
-    <watchListStack.Navigator
+    <accountStack.Navigator
       screenOptions={{
         headerShown: true,
       }}
     >
-      <watchListStack.Screen
-        name="Watchlist"
-        component={WatchList}
+      <accountStack.Screen
+        name="Account"
+        component={Account}
         options={{
           headerStyle: {
-            backgroundColor: "#3045b0",
+            backgroundColor: "#0B132B",
           },
           headerTintColor: "#fff",
           headerTitleStyle: {
             fontWeight: "bold",
           },
-          headerBackTitle: "Log Out",
         }}
       />
-      <watchListStack.Screen
+      <accountStack.Screen
         name="stock"
         component={Stock}
         options={{
           headerStyle: {
-            backgroundColor: "#3045b0",
+            backgroundColor: "#0B132B",
           },
           headerTintColor: "#fff",
           headerTitleStyle: {
@@ -39,8 +39,8 @@ const WatchListScreen = () => {
           },
         }}
       />
-    </watchListStack.Navigator>
+    </accountStack.Navigator>
   );
 };
 
-export default WatchListScreen;
+export default AccountScreen;

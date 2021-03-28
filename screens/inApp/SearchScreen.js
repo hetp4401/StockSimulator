@@ -24,14 +24,6 @@ const SearchScreen = () => {
             fontWeight: "bold",
           },
           headerBackTitle: "Log Out",
-          headerLeft: (props) => (
-            <HeaderBackButton
-              {...props}
-              onPress={() => {
-                console.log("SUCCS");
-              }}
-            />
-          ),
         }}
       />
       <searchStack.Screen
