@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Slid } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -12,24 +12,12 @@ import {
   Button,
   SafeAreaView,
 } from "react-native";
-//import { av_key } from "../config";
-import Chart from "./Chart";
 import ArticleLink from "./ArticleLink";
-import { db, auth } from "../firebase";
+import { db, auth } from "../lib/firebase";
 import firebase from "firebase";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import {
-  LineChart,
-  StackedAreaChart,
-  AreaChart,
-  Grid,
-  YAxis,
-} from "react-native-svg-charts";
-import { ClipPath, Defs, LinearGradient, Rect, Stop } from "react-native-svg";
-import { BorderlessButton } from "react-native-gesture-handler";
-import { inherits } from "util";
-
-const Parser = require("fast-html-parser");
+import { LineChart, YAxis } from "react-native-svg-charts";
+import { quote, news, chart } from "../lib/api";
 
 const Stock = ({ route, navigation }) => {
   const [account, setaccount] = useState({});
@@ -37,14 +25,12 @@ const Stock = ({ route, navigation }) => {
   const [owned, setowned] = useState(0);
   const [sliderb, setsliderb] = useState(0);
   const [sliders, setsliders] = useState(0);
-  const [slidetest, setslidetest] = useState(0);
 
   const [buy, setbuy] = useState(true);
 
   const { ticker, name } = route.params.x;
   navigation.setOptions({ title: ticker + " - " + name });
 
-  const [slables, setslables] = useState([""]);
   const [prices, setprices] = useState([0]);
   const [price, setprice] = useState(1);
   const [high, sethigh] = useState("");
@@ -75,24 +61,15 @@ const Stock = ({ route, navigation }) => {
   };
 
   const get_intraday = (interval) => {
-    fetch(
-      "https://stocksimulator.billybishop1.repl.co/api/chart/" +
-        ticker +
-        "/" +
-        interval
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        setprices(data);
-        setloading(false);
-      });
+    chart(ticker, interval).then((data) => {
+      setprices(data);
+      setloading(false);
+    });
   };
 
   const get_quote = () => {
-    fetch("https://stocksimulator.billybishop1.repl.co/api/quote/" + ticker)
-      .then((res) => res.json())
+    quote(ticker)
       .then((data) => {
-        console.log(data);
         setprice(parseFloat(data.price));
         sethigh(data.high);
         setlow(data.low);
@@ -105,12 +82,10 @@ const Stock = ({ route, navigation }) => {
   };
 
   const get_news = () => {
-    fetch("https://stocksimulator.billybishop1.repl.co/api/news/" + ticker)
-      .then((res) => res.json())
-      .then((res) => {
-        setlinks(res);
-        setloading2(false);
-      });
+    news().then((data) => {
+      setlinks(data);
+      setloading2(false);
+    });
   };
 
   const change_select = (x) => {
@@ -163,7 +138,6 @@ const Stock = ({ route, navigation }) => {
       .doc(auth().currentUser.uid)
       .update(target)
       .then(() => {
-        console.log("updated");
         update_data();
         Alert.alert(
           "Sold " +
@@ -228,6 +202,10 @@ const Stock = ({ route, navigation }) => {
   };
 
   useEffect(() => {
+    setInterval(() => {
+      get_intraday();
+      get_quote();
+    }, 30000);
     get_intraday(selected);
     get_quote();
     get_news();
@@ -273,9 +251,7 @@ const Stock = ({ route, navigation }) => {
           <LineChart
             style={{ flex: 1 }}
             data={prices}
-            //contentInset={{ top: 30, bottom: 30 }}
             svg={{
-              // fill: "url(#gradient)",
               stroke: "rgb(33, 110, 209)",
               strokeWidth: 2,
             }}

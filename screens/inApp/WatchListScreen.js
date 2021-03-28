@@ -1,9 +1,7 @@
 import React from "react";
-import { View, Text } from "react-native";
 import WatchList from "../../Components/WatchList";
 import Stock from "../../Components/Stock";
 import { HeaderBackButton } from "@react-navigation/stack";
-
 import { createStackNavigator } from "@react-navigation/stack";
 const watchListStack = createStackNavigator();
 
@@ -19,7 +17,7 @@ const WatchListScreen = () => {
         component={WatchList}
         options={{
           headerStyle: {
-            backgroundColor: "#0B132B",
+            backgroundColor: "#3045b0",
           },
           headerTintColor: "#fff",
           headerTitleStyle: {
@@ -41,7 +39,7 @@ const WatchListScreen = () => {
         component={Stock}
         options={{
           headerStyle: {
-            backgroundColor: "#0B132B",
+            backgroundColor: "#3045b0",
           },
           headerTintColor: "#fff",
           headerTitleStyle: {

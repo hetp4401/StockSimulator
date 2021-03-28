@@ -8,94 +8,44 @@ import {
 } from "react-native";
 import ArticleLink from "../Components/ArticleLink";
 
-const Parser = require("fast-html-parser");
-const axios = require("axios");
-const cheerio = require("react-native-cheerio");
+import { charts, trending, news } from "../lib/api";
 
 const Feed = ({ navigation }) => {
   const [gainers, setgainers] = useState([]);
   const [losers, setlosers] = useState([]);
   const [actives, setactives] = useState([]);
-  const [trending, settrending] = useState([]);
+  const [trendingarr, settrendingarr] = useState([]);
   const [selected, setselected] = useState(1);
   const [links, setlinks] = useState([]);
 
-  const get_yahoo = (category, setter) => {
-    fetch("https://finance.yahoo.com/" + category)
-      .then((res) => res.text())
-      .then((body) => {
-        const html = Parser.parse(body);
-        const table = html
-          .querySelector("#scr-res-table")
-          .querySelectorAll("tr")
-          .slice(1);
-
-        const arr = [];
-
-        table.forEach((x) => {
-          const data = x.querySelectorAll("td");
-          const t = data[0].querySelector("a").text;
-          const n = data[0].querySelector("a").rawAttributes.title;
-          const p = data[2].querySelector("span").text;
-          const vc = data[3].querySelector("span").text;
-          const pc = data[4].querySelector("span").text;
-          const v = data[5].querySelector("span").text;
-
-          arr.push({
-            ticker: t,
-            name: n,
-            price: p,
-            vchange: vc,
-            pchange: pc,
-            volume: v,
-          });
-
-          if (arr.length == 25) {
-            setter(arr);
-          }
-        });
-      });
+  const get_gainers = () => {
+    charts("gainers").then((data) => {
+      setgainers(data);
+    });
   };
 
-  const get_gainers = () => get_yahoo("gainers", setgainers);
-  const get_losers = () => get_yahoo("losers", setlosers);
-  const get_most_actives = () => get_yahoo("most-active", setactives);
+  const get_losers = () => {
+    charts("losers").then((data) => {
+      setlosers(data);
+    });
+  };
+
+  const get_most_actives = () => {
+    charts("most-active").then((data) => {
+      setactives(data);
+    });
+  };
+
   const get_trending = () => {
-    axios.get("https://ca.finance.yahoo.com/trending-tickers").then((res) => {
-      const $ = cheerio.load(res.data);
-      const trending = [];
-
-      $(".yfinlist-table")
-        .children()
-        .last()
-        .children()
-        .each((i, elem) => {
-          const ticker = $(elem).children().first().text();
-          const name = $(elem).children().eq(1).text();
-          const price = $(elem).children().eq(2).text();
-          const volume = $(elem).children().eq(6).text();
-          const vchange = $(elem).children().eq(4).text();
-          const pchange = $(elem).children().eq(5).text();
-
-          trending[i] = {
-            ticker,
-            name,
-            price,
-            volume,
-            vchange,
-            pchange,
-          };
-        });
-      settrending(trending);
+    trending().then((data) => {
+      settrendingarr(data);
     });
   };
 
   const get_news = () => {
-    fetch("https://stocksimulator.billybishop1.repl.co/api/news/")
-      .then((res) => res.json())
-      .then((res) => {
-        setlinks(res);
-      });
+    news().then((data) => {
+      setlinks(data);
+    });
   };
 
   useEffect(() => {
@@ -104,7 +54,7 @@ const Feed = ({ navigation }) => {
       get_losers();
       get_most_actives();
       get_trending();
-    }, 7000);
+    }, 30000);
     get_gainers();
     get_losers();
     get_most_actives();
@@ -116,6 +66,7 @@ const Feed = ({ navigation }) => {
     <ScrollView>
       <View
         style={{
+          paddingTop: 20,
           flexDirection: "row",
           justifyContent: "center",
           backgroundColor: "white",
@@ -161,10 +112,23 @@ const Feed = ({ navigation }) => {
       </View>
 
       <View style={styles.stock}>
-        <Text style={{ width: "30%", marginLeft: 20 }}>Ticker</Text>
-        <Text style={{ width: "23%", textAlign: "right" }}>Price</Text>
-        <Text style={{ width: "23%", textAlign: "right" }}>24h</Text>
-        <Text style={{ width: "23%", textAlign: "right", marginRight: 20 }}>
+        <Text style={{ width: "30%", marginLeft: 20, color: "#383838" }}>
+          Ticker
+        </Text>
+        <Text style={{ width: "23%", textAlign: "right", color: "#383838" }}>
+          Price
+        </Text>
+        <Text style={{ width: "23%", textAlign: "right", color: "#383838" }}>
+          24h
+        </Text>
+        <Text
+          style={{
+            width: "23%",
+            textAlign: "right",
+            marginRight: 20,
+            color: "#383838",
+          }}
+        >
           Volume
         </Text>
       </View>
@@ -174,7 +138,7 @@ const Feed = ({ navigation }) => {
         : selected == 2
         ? losers
         : selected == 3
-        ? trending
+        ? trendingarr
         : gainers
       ).map((x, i) => (
         <TouchableOpacity
@@ -196,7 +160,7 @@ const Feed = ({ navigation }) => {
           </Text>
           <Text
             style={{
-              ...{ width: "23%", textAlign: "right", color: "#474747" },
+              ...{ width: "23%", textAlign: "right" },
               ...(x.pchange.includes("+")
                 ? { color: "green" }
                 : { color: "red" }),
@@ -239,7 +203,7 @@ const styles = StyleSheet.create({
   selectedOption: {
     margin: 10,
     fontWeight: "bold",
-    color: "#0B132B",
+    color: "#1e2f85",
     fontSize: 18,
   },
   nonSelectedOption: {

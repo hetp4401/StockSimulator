@@ -11,7 +11,7 @@ import {
   Dimensions,
 } from "react-native";
 
-import { auth, db } from "../firebase";
+import { auth, db } from "../lib/firebase";
 
 const WatchList = ({ navigation }) => {
   const [favourites, setFavourites] = useState([]);

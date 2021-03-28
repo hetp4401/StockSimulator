@@ -1,9 +1,7 @@
 import React from "react";
-
 import Search from "../../Components/Search";
 import Stock from "../../Components/Stock";
 import { HeaderBackButton } from "@react-navigation/stack";
-
 import { createStackNavigator } from "@react-navigation/stack";
 const searchStack = createStackNavigator();
 
@@ -19,7 +17,7 @@ const SearchScreen = () => {
         component={Search}
         options={{
           headerStyle: {
-            backgroundColor: "#0B132B",
+            backgroundColor: "#3045b0",
           },
           headerTintColor: "#fff",
           headerTitleStyle: {
@@ -41,7 +39,7 @@ const SearchScreen = () => {
         component={Stock}
         options={{
           headerStyle: {
-            backgroundColor: "#0B132B",
+            backgroundColor: "#3045b0",
           },
           headerTintColor: "#fff",
           headerTitleStyle: {

@@ -1,10 +1,8 @@
 import React, { useCallback } from "react";
 import {
   Alert,
-  Button,
   Linking,
   StyleSheet,
-  View,
   Text,
   Image,
 } from "react-native";

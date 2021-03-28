@@ -9,13 +9,14 @@ import {
   ScrollView,
 } from "react-native";
 
+import { search } from "../lib/api";
+
 const Search = ({ navigation }) => {
   const [stocks, setstocks] = useState([]);
 
-  const results = (search) => {
-    if (search.length > 0) {
-      fetch("https://stocksimulator.billybishop1.repl.co/api/search/" + search)
-        .then((res) => res.json())
+  const results = (query) => {
+    if (query.length > 0) {
+      search(query)
         .then((data) => {
           setstocks(data);
         })

@@ -2,7 +2,6 @@ import React from "react";
 import Feed from "../../Components/Feed";
 import Stock from "../../Components/Stock";
 import { HeaderBackButton } from "@react-navigation/stack";
-import { auth } from "../../firebase";
 import { createStackNavigator } from "@react-navigation/stack";
 
 const feedStack = createStackNavigator();
@@ -19,7 +18,7 @@ const FeedScreen = () => {
         component={Feed}
         options={{
           headerStyle: {
-            backgroundColor: "#0B132B",
+            backgroundColor: "#3045b0",
           },
           headerTintColor: "#fff",
           headerTitleStyle: {
@@ -49,7 +48,7 @@ const FeedScreen = () => {
         component={Stock}
         options={{
           headerStyle: {
-            backgroundColor: "#0B132B",
+            backgroundColor: "#3045b0",
           },
           headerTintColor: "#fff",
           headerTitleStyle: {

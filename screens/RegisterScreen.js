@@ -11,7 +11,7 @@ import {
 
 import { Ionicons } from "@expo/vector-icons";
 
-import { auth, db } from "../firebase";
+import { auth, db } from "../lib/firebase";
 
 const LoginScreen = (props) => {
   const [email, setemail] = useState("");

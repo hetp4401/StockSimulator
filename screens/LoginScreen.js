@@ -5,26 +5,25 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  Image,
   Alert,
 } from "react-native";
 
 import { Ionicons } from "@expo/vector-icons";
 
-import { auth, db } from "../firebase";
+import { auth, db } from "../lib/firebase";
 import WatchListScreen from "./inApp/WatchListScreen";
 
 const LoginScreen = (props) => {
   const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
 
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     if (auth().currentUser) {
-  //       props.navigation.navigate("inApp", {});
-  //     }
-  //   }, 1500);
-  // }, []);
+  useEffect(() => {
+    setTimeout(() => {
+      if (auth().currentUser) {
+        props.navigation.navigate("inApp", {});
+      }
+    }, 1500);
+  }, []);
 
   const login = () => {
     auth()
@@ -43,12 +42,6 @@ const LoginScreen = (props) => {
   return (
     <View style={styles.container}>
       <View style={styles.circle} />
-      {/* <View style={{ marginTop: 150 }}>
-        <Image
-          source={require("../assets/logo.png")}
-          style={{ width: 100, height: 100, alignSelf: "center" }}
-        ></Image>
-      </View> */}
       <View style={{ marginHorizontal: 32, marginTop: 100 }}>
         <Text style={styles.header}>Login</Text>
         <TextInput
@@ -132,7 +125,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   signupButton: {
-    backgroundColor: "#0B132B",
+    backgroundColor: "#8a0ee3",
     padding: 15,
     borderWidth: 1,
     borderColor: "grey",

@@ -1,9 +1,8 @@
 import React from "react";
-import { View, Text, Dimensions } from "react-native";
-
+import { Dimensions } from "react-native";
 import { LineChart } from "react-native-chart-kit";
 
-export default Chart = ({ slables, prices }) => {
+export default Chart = ({ prices }) => {
   return (
     <LineChart
       data={{
@@ -13,7 +12,7 @@ export default Chart = ({ slables, prices }) => {
           },
         ],
       }}
-      width={Dimensions.get("window").width * 0.95} // from react-native
+      width={Dimensions.get("window").width * 0.95} 
       height={320}
       chartConfig={{
         backgroundGradientFrom: "#ebebeb",
