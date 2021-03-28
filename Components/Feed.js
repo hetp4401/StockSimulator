@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
   selectedOption: {
     margin: 10,
     fontWeight: "bold",
-    color: "#1e2f85",
+    color: "#3748a1",
     fontSize: 18,
   },
   nonSelectedOption: {

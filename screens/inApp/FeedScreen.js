@@ -24,20 +24,23 @@ const FeedScreen = (props) => {
           headerTitleStyle: {
             fontWeight: "bold",
           },
+          headerBackTitle: "Log Out",
           // headerLeft: (props) => (
           //   <HeaderBackButton
+          //     {...props}
           //     onPress={() => {
-          //       auth()
-          //         .signOut()
-          //         .then((res) => {
-
-          //         })
-          //         .catch((err) => {
-          //           console.log(err);
-          //         });
+          //       // auth()
+          //       //   .signOut()
+          //       //   .then((res) => {
+          //       //     console.log("SUCCSESS");
+          //       //   })
+          //       //   .catch((err) => {
+          //       //     console.log(err);
+          //       //   });
+          //       console.log("SUCCS");
           //     }}
           //   />
-          // ),
+          //),
         }}
       />
       <feedStack.Screen

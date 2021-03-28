@@ -18,6 +18,7 @@ import firebase from "firebase";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { LineChart, YAxis } from "react-native-svg-charts";
 import { quote, news, chart } from "../lib/api";
+import { Defs, LinearGradient, Stop } from "react-native-svg";
 
 const Stock = ({ route, navigation }) => {
   const [account, setaccount] = useState({});

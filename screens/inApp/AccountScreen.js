@@ -1,12 +1,11 @@
 import React from "react";
 import Stock from "../../Components/Stock";
-import { auth } from "../../firebase";
 import { createStackNavigator } from "@react-navigation/stack";
 import Account from "../../Components/Account";
 
 const accountStack = createStackNavigator();
 
-const AccountScreen = (props) => {
+const AccountScreen = () => {
   return (
     <accountStack.Navigator
       screenOptions={{
@@ -18,7 +17,7 @@ const AccountScreen = (props) => {
         component={Account}
         options={{
           headerStyle: {
-            backgroundColor: "#0B132B",
+            backgroundColor: "#3045b0",
           },
           headerTintColor: "#fff",
           headerTitleStyle: {
@@ -31,7 +30,7 @@ const AccountScreen = (props) => {
         component={Stock}
         options={{
           headerStyle: {
-            backgroundColor: "#0B132B",
+            backgroundColor: "#3045b0",
           },
           headerTintColor: "#fff",
           headerTitleStyle: {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -6,12 +6,9 @@ import {
   ScrollView,
   StyleSheet,
   SafeAreaView,
-  TextComponent,
-  ActivityIndicator,
-  Dimensions,
 } from "react-native";
 
-import { auth, db } from "../firebase";
+import { auth } from "../lib/firebase";
 
 const Account = ({ navigation }) => {
   const logOut = () => {
