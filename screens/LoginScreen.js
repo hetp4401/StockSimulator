@@ -66,7 +66,7 @@ const LoginScreen = (props) => {
           >
             <View style={styles.signupButton}>
               <Text style={{ color: "white" }}>
-                Don't have an accoumt? Sign Up Here
+                Don't have an account? Sign Up Here
               </Text>
             </View>
           </TouchableOpacity>
